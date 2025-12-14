@@ -270,15 +270,24 @@
         <!-- Sidebar -->
         <div class="col-md-3 sidebar">
             <div class="text-center mb-5">
+                <div class="mb-3 d-flex justify-content-center">
+                    <?php if(auth()->user()->photo): ?>
+                        <img src="<?php echo e(asset('storage/' . auth()->user()->photo)); ?>" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+                    <?php else: ?>
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
+                            <span class="fw-bold fs-3" style="color: #ff69b4;"><?php echo e(strtoupper(substr(auth()->user()->username, 0, 1))); ?></span>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <h4 class="text-white fw-bold">BrownyGift</h4>
                 <p class="text-white">Halo, <?php echo e(auth()->user()->username); ?>!</p>
             </div>
-            <a href="<?php echo e(route('dashboard.customer.index')); ?>"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="<?php echo e(route('dashboard.customer.profil')); ?>"><i class="fas fa-user"></i> Profil Saya</a>
-            <a href="<?php echo e(route('dashboard.customer.produk')); ?>"><i class="fas fa-gift"></i> Produk</a>
-            <a href="<?php echo e(route('dashboard.customer.keranjang')); ?>" class="active"><i class="fas fa-shopping-cart"></i> Keranjang</a>
-            <a href="<?php echo e(route('dashboard.customer.pesanan')); ?>"><i class="fas fa-truck"></i> Pesanan Saya</a>
-            <a href="<?php echo e(route('dashboard.customer.riwayat')); ?>"><i class="fas fa-history"></i> Riwayat Belanja</a>
+            <a href="<?php echo e(route('customer.index')); ?>"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="<?php echo e(route('customer.profil')); ?>"><i class="fas fa-user"></i> Profil Saya</a>
+            <a href="<?php echo e(route('customer.produk')); ?>"><i class="fas fa-gift"></i> Produk</a>
+            <a href="<?php echo e(route('customer.keranjang')); ?>" class="active"><i class="fas fa-shopping-cart"></i> Keranjang</a>
+            <a href="<?php echo e(route('customer.pesanansaya')); ?>"><i class="fas fa-truck"></i> Pesanan Saya</a>
+            <a href="<?php echo e(route('customer.riwayat')); ?>"><i class="fas fa-history"></i> Riwayat Belanja</a>
 
             <div class="logout">
                 <a href="<?php echo e(url('/logout')); ?>" onclick="return confirm('Yakin ingin keluar?')">
@@ -297,51 +306,62 @@
 
             <div class="cart-container">
                 <!-- Empty Cart State -->
-                <div class="empty-cart" id="emptyCart">
+                <div class="empty-cart" id="emptyCart" style="<?php echo e($cartItems->isEmpty() ? '' : 'display: none;'); ?>">
                     <div class="empty-cart-icon">
                         <i class="fas fa-shopping-bag"></i>
                     </div>
                     <h3>Keranjang Kosong</h3>
                     <p>Belum ada produk di keranjang Anda</p>
-                    <a href="<?php echo e(route('dashboard.customer.produk')); ?>" class="btn-shop">
+                    <a href="<?php echo e(route('customer.produk')); ?>" class="btn-shop">
                         <i class="fas fa-gift me-2"></i> Mulai Belanja
                     </a>
                 </div>
 
                 <!-- Cart Items (Hidden by default, shown when cart has items) -->
-                <div id="cartItems" style="display: none;">
-                    <!-- Cart Item 1 -->
-                    <div class="cart-item" data-id="1">
+                <div id="cartItems" style="<?php echo e($cartItems->isEmpty() ? 'display: none;' : ''); ?>">
+                    <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <!-- Cart Item -->
+                    <div class="cart-item" data-id="<?php echo e($item->id_keranjang); ?>">
                         <div class="cart-item-image">
-                            <img src="https://via.placeholder.com/120/ffc0cb/ffffff?text=Buket" alt="Product">
+                            <img src="<?php echo e(asset('storage/products/' . $item->produk->gambar_produk)); ?>" alt="<?php echo e($item->produk->nama_produk); ?>">
                         </div>
                         <div class="cart-item-details">
-                            <div class="cart-item-category">Anniversary</div>
-                            <div class="cart-item-title">Buket Mawar Pink Premium</div>
-                            <div class="cart-item-price">Rp 250.000</div>
+                            <div class="cart-item-category">Product</div>
+                            <div class="cart-item-title"><?php echo e($item->produk->nama_produk); ?></div>
+                            <div class="cart-item-price">Rp <?php echo e(number_format($item->produk->harga_produk, 0, ',', '.')); ?></div>
                         </div>
                         <div class="cart-item-actions">
                             <div class="quantity-control">
-                                <button onclick="decreaseQty(1)">
+                                <!-- Note: For simplicity, update quantity via AJAX or simple form submission could be done. 
+                                     Here we will use a simple approach or keep the static JS logic but bounded to backend? 
+                                     Let's use a form for update if JS is too complex to inject now.
+                                     Actually, let's keep JS logic but update backend via fetch.
+                                -->
+                                <button onclick="updateQty(<?php echo e($item->id_keranjang); ?>, -1)">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <span id="qty-1">1</span>
-                                <button onclick="increaseQty(1)">
+                                <span id="qty-<?php echo e($item->id_keranjang); ?>"><?php echo e($item->quantity); ?></span>
+                                <button onclick="updateQty(<?php echo e($item->id_keranjang); ?>, 1)">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                            <button class="btn-remove" onclick="removeItem(1)">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <form action="<?php echo e(route('customer.keranjang.remove', $item->id_keranjang)); ?>" method="POST" onsubmit="return confirm('Hapus produk?');">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('DELETE'); ?>
+                                <button type="submit" class="btn-remove">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     <!-- Cart Summary -->
                     <div class="cart-summary">
                         <h4><i class="fas fa-receipt me-2"></i> Ringkasan Belanja</h4>
                         <div class="summary-row">
-                            <span>Subtotal (<span id="totalItems">0</span> item)</span>
-                            <span id="subtotal">Rp 0</span>
+                            <span>Subtotal (<span id="totalItems"><?php echo e($cartItems->sum('quantity')); ?></span> item)</span>
+                            <span id="subtotal">Rp <?php echo e(number_format($cartItems->sum(function($item){ return $item->produk->harga_produk * $item->quantity; }), 0, ',', '.')); ?></span>
                         </div>
                         <div class="summary-row">
                             <span>Biaya Pengiriman</span>
@@ -349,13 +369,13 @@
                         </div>
                         <div class="summary-row total">
                             <span>Total</span>
-                            <span id="total">Rp 0</span>
+                            <span id="total">Rp <?php echo e(number_format($cartItems->sum(function($item){ return $item->produk->harga_produk * $item->quantity; }) + 15000, 0, ',', '.')); ?></span>
                         </div>
                         <button class="btn-checkout" onclick="checkout()">
                             <i class="fas fa-credit-card me-2"></i> Checkout
                         </button>
                         <div class="text-center">
-                            <a href="<?php echo e(route('dashboard.customer.produk')); ?>" class="btn-continue">
+                            <a href="<?php echo e(route('customer.produk')); ?>" class="btn-continue">
                                 <i class="fas fa-arrow-left me-2"></i> Lanjut Belanja
                             </a>
                         </div>
@@ -369,116 +389,46 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 
-    let cartData = [];
+    function updateQty(id, change) {
+        const qtyElement = document.getElementById(`qty-${id}`);
+        let currentQty = parseInt(qtyElement.textContent);
+        let newQty = currentQty + change;
 
+        if (newQty < 1) return;
 
-    function initCart() {
-
-        renderCart();
-    }
-
-
-    function renderCart() {
-        const emptyCart = document.getElementById('emptyCart');
-        const cartItems = document.getElementById('cartItems');
-
-        if (cartData.length === 0) {
-            emptyCart.style.display = 'block';
-            cartItems.style.display = 'none';
-        } else {
-            emptyCart.style.display = 'none';
-            cartItems.style.display = 'block';
-
-
-            const itemsHTML = cartData.map(item => `
-                <div class="cart-item" data-id="${item.id}">
-                    <div class="cart-item-image">
-                        <img src="${item.image}" alt="${item.name}">
-                    </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-category">${item.category}</div>
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
-                    </div>
-                    <div class="cart-item-actions">
-                        <div class="quantity-control">
-                            <button onclick="decreaseQty(${item.id})">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <span id="qty-${item.id}">${item.qty}</span>
-                            <button onclick="increaseQty(${item.id})">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                        <button class="btn-remove" onclick="removeItem(${item.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-
-            const cartContainer = cartItems;
-            const summary = cartContainer.querySelector('.cart-summary');
-            const existingItems = cartContainer.querySelectorAll('.cart-item');
-            existingItems.forEach(item => item.remove());
-
-            if (summary) {
-                summary.insertAdjacentHTML('beforebegin', itemsHTML);
+        fetch('<?php echo e(route("customer.keranjang.update")); ?>', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+            },
+            body: JSON.stringify({
+                id_keranjang: id,
+                quantity: newQty
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Determine price from DOM or data attribute if possible, or reload page.
+                // Simple approach: reload page to update totals correctly
+                location.reload(); 
+            } else {
+                alert('Gagal mengupdate keranjang');
             }
-
-            updateSummary();
-        }
-    }
-
-    function updateSummary() {
-        const totalItems = cartData.reduce((sum, item) => sum + item.qty, 0);
-        const subtotal = cartData.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        const shipping = 15000;
-        const total = subtotal + shipping;
-
-        document.getElementById('totalItems').textContent = totalItems;
-        document.getElementById('subtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-        document.getElementById('total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
-    }
-
-    function increaseQty(id) {
-        const item = cartData.find(item => item.id === id);
-        if (item) {
-            item.qty++;
-            document.getElementById(`qty-${id}`).textContent = item.qty;
-            updateSummary();
-        }
-    }
-
-    function decreaseQty(id) {
-        const item = cartData.find(item => item.id === id);
-        if (item && item.qty > 1) {
-            item.qty--;
-            document.getElementById(`qty-${id}`).textContent = item.qty;
-            updateSummary();
-        }
-    }
-
-    function removeItem(id) {
-        if (confirm('Hapus produk dari keranjang?')) {
-            cartData = cartData.filter(item => item.id !== id);
-            renderCart();
-        }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function checkout() {
-        if (cartData.length === 0) {
+        if (<?php echo e($cartItems->isEmpty() ? 'true' : 'false'); ?>) {
             alert('Keranjang kosong!');
             return;
         }
 
-
-        alert('Fitur checkout akan segera hadir!');
-        console.log('Checkout data:', cartData);
+        // Redirect to checkout page
+        window.location.href = "<?php echo e(route('customer.checkout')); ?>";
     }
-
-    initCart();
 </script>
 </body>
-</html>
-<?php /**PATH C:\laragon\www\PROJECTPWEB_K11\resources\views/dashboard/customer/keranjang.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\laragon\www\PROJECTPWEB_K11\resources\views/dashboard/customer/keranjang.blade.php ENDPATH**/ ?>

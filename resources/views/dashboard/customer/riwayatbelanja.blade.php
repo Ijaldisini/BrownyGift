@@ -348,15 +348,24 @@
     <div class="row">
         <div class="col-md-3 sidebar">
             <div class="text-center mb-5">
+                <div class="mb-3 d-flex justify-content-center">
+                    @if(auth()->user()->photo)
+                        <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+                    @else
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
+                            <span class="fw-bold fs-3" style="color: #ff69b4;">{{ strtoupper(substr(auth()->user()->username, 0, 1)) }}</span>
+                        </div>
+                    @endif
+                </div>
                 <h4 class="text-white fw-bold">BrownyGift</h4>
                 <p class="text-white">Halo, {{ auth()->user()->username }}!</p>
             </div>
-            <a href="{{ route('dashboard.customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="{{ route('dashboard.customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
-            <a href="{{ route('dashboard.customer.produk') }}"><i class="fas fa-gift"></i> Produk</a>
-            <a href="{{ route('dashboard.customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
-            <a href="{{ route('dashboard.customer.pesanan') }}"><i class="fas fa-truck"></i> Pesanan Saya</a>
-            <a href="{{ route('dashboard.customer.riwayat') }}" class="active"><i class="fas fa-history"></i> Riwayat Belanja</a>
+            <a href="{{ route('customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{{ route('customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
+            <a href="{{ route('customer.produk') }}"><i class="fas fa-gift"></i> Produk</a>
+            <a href="{{ route('customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
+            <a href="{{ route('customer.pesanansaya') }}"><i class="fas fa-truck"></i> Pesanan Saya</a>
+            <a href="{{ route('customer.riwayat') }}" class="active"><i class="fas fa-history"></i> Riwayat Belanja</a>
 
             <div class="logout">
                 <a href="{{ url('/logout') }}" onclick="return confirm('Yakin ingin keluar?')">
@@ -376,7 +385,7 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="stat-label">Total Pesanan</div>
-                            <div class="stat-value" id="totalOrders">4</div>
+                            <div class="stat-value" id="totalOrders">{{ $orders->count() }}</div>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-shopping-bag"></i>
@@ -388,7 +397,9 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="stat-label">Menunggu</div>
-                            <div class="stat-value" id="pendingOrders">1</div>
+                            <div class="stat-value" id="pendingOrders">
+                                {{ $orders->whereIn('id_status_pemesanan', [1, 2])->count() }}
+                            </div>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-clock"></i>
@@ -399,8 +410,10 @@
                 <div class="stat-card stat-card-blue">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-label">Diproses</div>
-                            <div class="stat-value" id="processingOrders">1</div>
+                            <div class="stat-label">Diproses/Dikirim</div>
+                            <div class="stat-value" id="processingOrders">
+                                {{ $orders->whereIn('id_status_pemesanan', [3, 4])->count() }}
+                            </div>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-box"></i>
@@ -412,7 +425,9 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="stat-label">Selesai</div>
-                            <div class="stat-value" id="completedOrders">1</div>
+                            <div class="stat-value" id="completedOrders">
+                                {{ $orders->whereIn('id_status_pemesanan', [5])->count() }}
+                            </div>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-check-circle"></i>
@@ -429,7 +444,7 @@
             </div>
 
             <div class="history-container" id="historyContainer">
-                <div class="table-responsive">
+                <div class="table-responsive" style="{{ $orders->isEmpty() ? 'display: none;' : '' }}">
                     <table class="history-table">
                         <thead>
                             <tr>
@@ -437,79 +452,50 @@
                                 <th>Tanggal</th>
                                 <th>Produk</th>
                                 <th>Total</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody">
-                            <tr data-status="pending">
-                                <td class="order-id">BG-2024-001</td>
-                                <td>10 Nov 2024</td>
+                            @foreach($orders as $order)
+                            <tr data-status="{{ strtolower($order->statusPemesanan->status_pemesanan ?? 'unknown') }}">
+                                <td class="order-id">BG-{{ date('Y', strtotime($order->created_at)) }}-{{ str_pad($order->id_pesanan, 3, '0', STR_PAD_LEFT) }}</td>
+                                <td>{{ date('d M Y', strtotime($order->created_at)) }}</td>
                                 <td>
                                     <div class="product-info">
-                                        <span class="product-name">Buket Mawar Pink Premium x2</span>
-                                        <span class="product-name">Buket Anniversary Mewah x1</span>
+                                        @foreach($order->detailPesanan as $detail)
+                                            <span class="product-name">{{ $detail->produk->nama_produk ?? 'Produk Dihapus' }} (x{{ $detail->quantity_per_produk }})</span>
+                                        @endforeach
                                     </div>
                                 </td>
-                                <td><strong>Rp 850.000</strong></td>
+                                <td><strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong></td>
                                 <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-001')">
+                                    @php
+                                        $rawStatus = $order->statusPemesanan->status_pemesanan ?? 'unknown';
+                                        $statusClass = match(strtolower($rawStatus)) {
+                                            'menunggu pembayaran' => 'status-pending',
+                                            'menunggu konfirmasi' => 'status-pending',
+                                            'diproses' => 'status-processing',
+                                            'dikirim' => 'status-shipped',
+                                            'selesai' => 'status-completed',
+                                            'dibatalkan' => 'status-cancelled',
+                                            default => 'status-pending'
+                                        };
+                                    @endphp
+                                    <span class="status-badge {{ $statusClass }}">{{ ucfirst($rawStatus) }}</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-detail" onclick="showDetail({{ $order->id_pesanan }})">
                                         <i class="fas fa-eye"></i> Detail
                                     </button>
                                 </td>
                             </tr>
-
-                            <tr data-status="processing">
-                                <td class="order-id">BG-2024-002</td>
-                                <td>12 Nov 2024</td>
-                                <td>
-                                    <div class="product-info">
-                                        <span class="product-name">Buket Wedding Dream x1</span>
-                                    </div>
-                                </td>
-                                <td><strong>Rp 500.000</strong></td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-002')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr data-status="shipped">
-                                <td class="order-id">BG-2024-003</td>
-                                <td>13 Nov 2024</td>
-                                <td>
-                                    <div class="product-info">
-                                        <span class="product-name">Buket Birthday Delight x1</span>
-                                    </div>
-                                </td>
-                                <td><strong>Rp 200.000</strong></td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-003')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr data-status="completed">
-                                <td class="order-id">BG-2024-004</td>
-                                <td>8 Nov 2024</td>
-                                <td>
-                                    <div class="product-info">
-                                        <span class="product-name">Buket New Baby Pink x2</span>
-                                    </div>
-                                </td>
-                                <td><strong>Rp 360.000</strong></td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-004')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
 
-                <div class="empty-history" id="emptyHistory" style="display: none;">
+                <div class="empty-history" id="emptyHistory" style="{{ $orders->isEmpty() ? 'display: block;' : 'display: none;' }}">
                     <div class="empty-history-icon">
                         <i class="fas fa-box-open"></i>
                     </div>
@@ -537,6 +523,9 @@
                 <div class="order-detail-item">
                     <strong>Tanggal:</strong> <span id="modalDate">-</span>
                 </div>
+                 <div class="order-detail-item">
+                    <strong>Status:</strong> <span id="modalStatus">-</span>
+                </div>
                 <div class="order-detail-item">
                     <strong>Total:</strong> <span id="modalTotal">-</span>
                 </div>
@@ -555,10 +544,33 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const ordersData = [
-        { id: 'BG-2024-001', date: '10 Nov 2024', products: 'Buket Mawar Pink Premium x2, Buket Anniversary Mewah x1', total: 850000, status: 'pending', statusText: 'Menunggu Pembayaran' },
-        { id: 'BG-2024-002', date: '12 Nov 2024', products: 'Buket Wedding Dream x1', total: 500000, status: 'processing', statusText: 'Diproses' },
-        { id: 'BG-2024-003', date: '13 Nov 2024', products: 'Buket Birthday Delight x1', total: 200000, status: 'shipped', statusText: 'Dikirim' },
-        { id: 'BG-2024-004', date: '8 Nov 2024', products: 'Buket New Baby Pink x2', total: 360000, status: 'completed', statusText: 'Selesai' }
+        @foreach($orders as $order)
+        {
+            id: {{ $order->id_pesanan }},
+            displayId: 'BG-{{ date('Y', strtotime($order->created_at)) }}-{{ str_pad($order->id_pesanan, 3, '0', STR_PAD_LEFT) }}',
+            date: '{{ date('d M Y', strtotime($order->created_at)) }}',
+            total: {{ $order->total }},
+            rawStatus: '{{ ucfirst($order->statusPemesanan->status_pemesanan ?? "Unknown") }}',
+            statusClass: (() => {
+                 const s = '{{ strtolower($order->statusPemesanan->status_pemesanan ?? "Unknown") }}';
+                 if(s === 'menunggu pembayaran' || s === 'menunggu konfirmasi') return 'status-pending';
+                 if(s === 'diproses') return 'status-processing';
+                 if(s === 'dikirim') return 'status-shipped';
+                 if(s === 'selesai') return 'status-completed';
+                 if(s === 'dibatalkan') return 'status-cancelled';
+                 return 'status-pending';
+            })(),
+            products: [
+                @foreach($order->detailPesanan as $detail)
+                {
+                    name: '{{ $detail->produk->nama_produk ?? "Produk Dihapus" }}',
+                    qty: {{ $detail->quantity_per_produk }},
+                    price: {{ $detail->harga_produk }}
+                },
+                @endforeach
+            ]
+        },
+        @endforeach
     ];
 
     function filterHistory() {
@@ -578,18 +590,27 @@
             }
         });
 
-        document.querySelector('.table-responsive').style.display = visibleCount ? 'block' : 'none';
-        document.getElementById('emptyHistory').style.display = visibleCount ? 'none' : 'block';
+        const tableResponsive = document.querySelector('.table-responsive');
+        const emptyHistory = document.getElementById('emptyHistory');
+
+        if(tableResponsive) tableResponsive.style.display = visibleCount ? 'block' : 'none';
+        if(emptyHistory) emptyHistory.style.display = visibleCount ? 'none' : 'block';
     }
 
     function showDetail(orderId) {
         const order = ordersData.find(o => o.id === orderId);
         if (!order) return;
 
-        document.getElementById('modalOrderId').textContent = order.id;
+        document.getElementById('modalOrderId').textContent = order.displayId;
         document.getElementById('modalDate').textContent = order.date;
+        document.getElementById('modalStatus').innerHTML = `<span class="status-badge ${order.statusClass}">${order.rawStatus}</span>`;
         document.getElementById('modalTotal').textContent = `Rp ${order.total.toLocaleString('id-ID')}`;
-        document.getElementById('modalProducts').innerHTML = order.products.split(', ').map(p => `<li>${p}</li>`).join('');
+        
+        const productsList = order.products.map(p => 
+            `<li>${p.name} (x${p.qty}) - Rp ${(p.price * p.qty).toLocaleString('id-ID')}</li>`
+        ).join('');
+        
+        document.getElementById('modalProducts').innerHTML = productsList;
 
         new bootstrap.Modal(document.getElementById('detailModal')).show();
     }

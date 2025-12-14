@@ -58,15 +58,25 @@
   <div class="row">
     <div class="col-md-3 sidebar">
       <div class="text-center mb-5">
+                <div class="mb-3 d-flex justify-content-center">
+                    @if(auth()->user()->photo)
+                        <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+                    @else
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
+                            <span class="fw-bold fs-3" style="color: #ff69b4;">{{ strtoupper(substr(auth()->user()->username, 0, 1)) }}</span>
+                        </div>
+                    @endif
+                </div>
         <h4 class="text-white fw-bold">BrownyGift</h4>
-        <p class="text-white">Halo, <span id="usernameSpan">Customer</span>!</p>
+        <p class="text-white">Halo, {{ auth()->user()->username }}!</p>
       </div>
-       <a href="{{ route('dashboard.customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="{{ route('dashboard.customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
-            <a href="{{ route('dashboard.customer.produk') }}" class="active"><i class="fas fa-gift"></i> Produk</a>
-            <a href="{{ route('dashboard.customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
-            <a href="{{ route('dashboard.customer.pesanan') }}"><i class="fas fa-truck"></i> Pesanan Saya</a>
-            <a href="{{ route('dashboard.customer.riwayat') }}"><i class="fas fa-history"></i> Riwayat Belanja</a>
+       <a href="{{ route('customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{{ route('customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
+            <a href="{{ route('customer.produk') }}" class="active"><i class="fas fa-gift"></i> Produk</a>
+            <a href="{{ route('customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
+            <a href="{{ route('customer.pesanansaya') }}"><i class="fas fa-truck"></i> Pesanan Saya</a>
+            <a href="{{ route('customer.riwayat') }}"><i class="fas fa-history"></i> Riwayat Belanja</a>
+
 
      <div class="logout">
                 <a href="{{ url('/logout') }}" onclick="return confirm('Yakin ingin keluar?')">
@@ -96,24 +106,38 @@
       </div>
 
       <div class="product-grid" id="productGrid">
+        @foreach($products as $product)
+        <div class="product-card" data-category="{{ $product->kategori ?? 'All' }}">
+          <div class="product-image">
+            <img src="{{ asset('storage/products/' . $product->gambar_produk) }}" alt="{{ $product->nama_produk }}">
+            <div class="product-rating">
+              <i class="fas fa-star"></i> 4.5
+            </div>
+          </div>
+          <div class="product-body">
+            <div class="product-category">{{ $product->kategori ?? 'Umum' }}</div>
+            <div class="product-title">{{ $product->nama_produk }}</div>
+            <div class="product-description">{{ $product->deskripsi_produk }}</div>
+            <div class="product-footer">
+              <span class="product-price">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+              <button onclick="addToCart({{ $product->id_produk }}, this)" class="btn-add-cart">
+                <i class="fas fa-shopping-cart"></i> Tambah
+              </button>
+            </div>
+          </div>
+        </div>
+        @endforeach
 
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <i class="fas fa-search"></i>
+          <h4>Produk Tidak Ditemukan</h4>
+          <p>Coba kata kunci atau filter lain</p>
+        </div>
 
-      <div class="empty-state" id="emptyState" style="display:none;">
-        <i class="fas fa-search"></i>
-        <h4>Produk Tidak Ditemukan</h4>
-        <p>Coba kata kunci atau filter lain</p>
-      </div>
-
-      <div class="pagination-wrapper">
-        <div class="pagination">
-          <a href="#" class="page-item"><i class="fas fa-chevron-left"></i></a>
-          <a href="#" class="page-item active">1</a>
-          <a href="#" class="page-item">2</a>
-          <a href="#" class="page-item">3</a>
-          <a href="#" class="page-item"><i class="fas fa-chevron-right"></i></a>
+        <div class="pagination-wrapper">
+           <!-- Pagination could be implemented here -->
         </div>
       </div>
-    </div>
   </div>
 </div>
 
@@ -132,44 +156,78 @@
     buttons.forEach(btn => btn.classList.remove('active'));
     if (ev) ev.currentTarget.classList.add('active');
 
+    const targetCat = category.toLowerCase();
+
     cards.forEach(card => {
-      if (category === 'all' || card.dataset.category === category){
-        card.style.display = 'block'; visibleCount++;
-      } else { card.style.display = 'none'; }
+        const cardCat = (card.dataset.category || '').toLowerCase();
+        if (targetCat === 'all' || cardCat === targetCat){
+            card.style.display = 'block'; visibleCount++;
+        } else { 
+            card.style.display = 'none'; 
+        }
     });
 
     productGrid.style.display = visibleCount ? 'grid' : 'none';
     emptyState.style.display = visibleCount ? 'none' : 'block';
   }
 
-  function filterProducts(){
-    const searchValue = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.querySelectorAll('.product-card');
-    const productGrid = document.getElementById('productGrid');
-    const emptyState = document.getElementById('emptyState');
-    let visibleCount = 0;
+  function addToCart(id, btn){
+    // const btn = ev.currentTarget;
+    const originalContent = btn.innerHTML;
+    const originalBg = btn.style.background;
 
-    cards.forEach(card => {
-      const title = card.querySelector('.product-title').textContent.toLowerCase();
-      const desc  = card.querySelector('.product-description').textContent.toLowerCase();
-      const match = title.includes(searchValue) || desc.includes(searchValue);
-      card.style.display = match ? 'block' : 'none';
-      if (match) visibleCount++;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    btn.disabled = true;
+
+    fetch('{{ route('customer.keranjang.add') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            id_produk: id,
+            quantity: 1
+        })
+    })
+    .then(async response => {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json();
+        } else {
+            const text = await response.text();
+            throw new Error('Server returned non-JSON: ' + text.substring(0, 100));
+        }
+    })
+    .then(data => {
+        if(data.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
+            btn.style.background = '#4caf50';
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.style.background = originalBg;
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            // Check for validation errors
+            if(data.errors) {
+                let msg = '';
+                for(let key in data.errors) msg += data.errors[key][0] + '\n';
+                alert('Gagal: \n' + msg);
+            } else {
+                alert('Gagal menambahkan: ' + (data.message || 'Error'));
+            }
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan sistem: ' + error.message);
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
     });
-
-    productGrid.style.display = visibleCount ? 'grid' : 'none';
-    emptyState.style.display = visibleCount ? 'none' : 'block';
-  }
-
-  function addToCart(id, ev){
-    const btn = ev.currentTarget;
-    btn.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
-    btn.style.background = '#4caf50';
-    setTimeout(() => {
-      btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Tambah';
-      btn.style.background = '';
-    }, 2000);
-    console.log('Product '+id+' added (frontend only)');
   }
 </script>
 </body>

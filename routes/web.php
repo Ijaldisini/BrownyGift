@@ -58,20 +58,27 @@ Route::middleware(['auth'])
         Route::post('/profil_saya', [OwnerController::class, 'updateProfilSaya']);
     });
 
-Route::middleware(['auth'])
-    ->prefix('customer/dashboard')
-    ->name('dashboard.customer.')
-    ->group(function () {
+Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
-        Route::get('/', [CustomerController::class, 'dashboard'])->name('index');
+    // Route::get('/', [CustomerController::class, 'dashboard'])->name('customer.dashboard'); 
 
-        Route::get('/profil', [CustomerController::class, 'profil'])->name('profil');
-        Route::put('/profil', [CustomerController::class, 'updateProfile'])->name('profile.update');
-        Route::put('/password', [CustomerController::class, 'updatePassword'])->name('password.update');
-        Route::put('/photo', [CustomerController::class, 'updatePhoto'])->name('photo.update');
+    Route::get('/index', [CustomerController::class, 'dashboard'])->name('customer.index');
+    Route::get('/profil', [CustomerController::class, 'profil'])->name('customer.profil');
+    Route::put('/profil', [CustomerController::class, 'updateProfile'])->name('customer.profile.update');
+    Route::post('/profil/address', [CustomerController::class, 'storeAddress'])->name('customer.address.store');
+    Route::delete('/profil/address/{id}', [CustomerController::class, 'deleteAddress'])->name('customer.address.delete');
+    Route::put('/password', [CustomerController::class, 'updatePassword'])->name('customer.password.update');
 
-        Route::get('/produk', [CustomerController::class, 'produk'])->name('produk');
-        Route::get('/keranjang', [CustomerController::class, 'keranjang'])->name('keranjang');
-        Route::get('/pesanan', [CustomerController::class, 'pesanansaya'])->name('pesanan');
-        Route::get('/riwayat', [CustomerController::class, 'riwayat'])->name('riwayat');
-    });
+    Route::put('/photo', [CustomerController::class, 'updatePhoto'])->name('customer.photo.update');
+
+    Route::get('/produk', [CustomerController::class, 'produk'])->name('customer.produk');
+    Route::get('/keranjang', [CustomerController::class, 'keranjang'])->name('customer.keranjang');
+    Route::post('/keranjang/add', [CustomerController::class, 'addToCart'])->name('customer.keranjang.add');
+    Route::put('/keranjang/update', [CustomerController::class, 'updateCart'])->name('customer.keranjang.update');
+    Route::delete('/keranjang/remove/{id}', [CustomerController::class, 'removeFromCart'])->name('customer.keranjang.remove');
+    Route::get('/checkout', [CustomerController::class, 'checkout'])->name('customer.checkout');
+    Route::post('/checkout', [CustomerController::class, 'processCheckout'])->name('customer.checkout.process');
+    Route::get('/pesanansaya', [CustomerController::class, 'pesanansaya'])->name('customer.pesanansaya'); // Fixed path from /pesanan to /pesanansaya to match
+    Route::post('/pesanansaya/{id}/upload', [CustomerController::class, 'uploadBukti'])->name('customer.pesanan.upload'); // Fixed path
+    Route::get('/riwayatbelanja', [CustomerController::class, 'riwayat'])->name('customer.riwayat'); // Fixed path
+});

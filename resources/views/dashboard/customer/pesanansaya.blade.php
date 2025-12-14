@@ -232,15 +232,24 @@
     <div class="row">
         <div class="col-md-3 sidebar">
             <div class="text-center mb-5">
+                <div class="mb-3 d-flex justify-content-center">
+                    @if(auth()->user()->photo)
+                        <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+                    @else
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
+                            <span class="fw-bold fs-3" style="color: #ff69b4;">{{ strtoupper(substr(auth()->user()->username, 0, 1)) }}</span>
+                        </div>
+                    @endif
+                </div>
                 <h4 class="text-white fw-bold">BrownyGift</h4>
                 <p class="text-white">Halo, {{ auth()->user()->username }}!</p>
             </div>
-            <a href="{{ route('dashboard.customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="{{ route('dashboard.customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
-            <a href="{{ route('dashboard.customer.produk') }}"><i class="fas fa-gift"></i> Produk</a>
-            <a href="{{ route('dashboard.customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
-            <a href="{{ route('dashboard.customer.pesanan') }}" class="active"><i class="fas fa-truck"></i> Pesanan Saya</a>
-            <a href="{{ route('dashboard.customer.riwayat') }}"><i class="fas fa-history"></i> Riwayat Belanja</a>
+            <a href="{{ route('customer.index') }}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{{ route('customer.profil') }}"><i class="fas fa-user"></i> Profil Saya</a>
+            <a href="{{ route('customer.produk') }}"><i class="fas fa-gift"></i> Produk</a>
+            <a href="{{ route('customer.keranjang') }}"><i class="fas fa-shopping-cart"></i> Keranjang</a>
+            <a href="{{ route('customer.pesanansaya') }}" class="active"><i class="fas fa-truck"></i> Pesanan Saya</a>
+            <a href="{{ route('customer.riwayat') }}"><i class="fas fa-history"></i> Riwayat Belanja</a>
 
             <div class="logout">
                 <a href="{{ url('/logout') }}" onclick="return confirm('Yakin ingin keluar?')">
@@ -269,72 +278,57 @@
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody">
+                            @forelse($orders as $order)
                             <tr>
-                                <td class="order-id">BG-2024-001</td>
-                                <td>10/11/2024</td>
-                                <td><strong>Rp 850.000</strong></td>
+                                <td class="order-id">BG-{{ date('Y', strtotime($order->created_at)) }}-{{ str_pad($order->id_pesanan, 3, '0', STR_PAD_LEFT) }}</td>
+                                <td>{{ date('d/m/Y', strtotime($order->created_at)) }}</td>
+                                <td><strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong></td>
                                 <td>
-                                    <span class="status-badge status-pending">Menunggu Pembayaran</span>
+                                    @php
+                                        $statusClass = 'status-pending';
+                                        $rawStatus = $order->statusPemesanan->status_pemesanan ?? 'unknown';
+                                        $status = strtolower($rawStatus);
+                                        
+                                        if($status == 'diproses') $statusClass = 'status-processing';
+                                        elseif($status == 'dikirim') $statusClass = 'status-shipped';
+                                        elseif($status == 'selesai') $statusClass = 'status-completed';
+                                        elseif($status == 'dibatalkan') $statusClass = 'status-cancelled';
+                                    @endphp
+                                    <span class="status-badge {{ $statusClass }}">{{ ucfirst($rawStatus) }}</span>
                                 </td>
                                 <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-001')">
+                                    <button class="btn-action btn-detail" onclick="showDetail({{ $order->id_pesanan }})">
                                         <i class="fas fa-eye"></i> Detail
                                     </button>
-                                    <button class="btn-action btn-upload" onclick="uploadProof('BG-2024-001')">
+                                    @php
+                                        $paymentMethod = strtolower($order->metodePembayaran->metode_pembayaran ?? '');
+                                        $isCOD = str_contains($paymentMethod, 'cod') || str_contains($paymentMethod, 'cash') || str_contains($paymentMethod, 'ambil');
+                                    @endphp
+                                    
+                                    @if($status == 'menunggu pembayaran' && !$isCOD)
+                                    <button class="btn-action btn-upload" onclick="uploadProof({{ $order->id_pesanan }})">
                                         <i class="fas fa-upload"></i> Upload Bukti
                                     </button>
+                                    @endif
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="order-id">BG-2024-002</td>
-                                <td>12/11/2024</td>
-                                <td><strong>Rp 500.000</strong></td>
-                                <td>
-                                    <span class="status-badge status-processing">Diproses</span>
-                                </td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-002')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="order-id">BG-2024-003</td>
-                                <td>13/11/2024</td>
-                                <td><strong>Rp 200.000</strong></td>
-                                <td>
-                                    <span class="status-badge status-shipped">Dikirim</span>
-                                </td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-003')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="order-id">BG-2024-004</td>
-                                <td>8/11/2024</td>
-                                <td><strong>Rp 360.000</strong></td>
-                                <td>
-                                    <span class="status-badge status-completed">Selesai</span>
-                                </td>
-                                <td>
-                                    <button class="btn-action btn-detail" onclick="showDetail('BG-2024-004')">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
-                            </tr>
+                            @empty
+                            <!-- Empty state rendered via JS or just simple TR here? 
+                                 The original code had a separate div #emptyOrders.
+                                 Let's keep the table empty and show the div if empty.
+                            -->
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <div class="empty-orders" id="emptyOrders" style="display: none;">
+                <div class="empty-orders" id="emptyOrders" style="{{ $orders->isEmpty() ? 'display: block;' : 'display: none;' }}">
                     <div class="empty-orders-icon">
                         <i class="fas fa-box-open"></i>
                     </div>
                     <h4>Belum Ada Pesanan</h4>
                     <p>Anda belum memiliki pesanan apapun</p>
-                    <a href="{{ route('dashboard.customer.produk') }}" class="btn-shop">
+                    <a href="{{ route('customer.produk') }}" class="btn-shop">
                         <i class="fas fa-gift me-2"></i> Mulai Belanja
                     </a>
                 </div>
@@ -342,82 +336,63 @@
         </div>
     </div>
 
-<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+<!-- Modal Detail Pesanan -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailModalLabel">
-                    <i class="fas fa-receipt me-2"></i> Detail Pesanan
-                </h5>
+                <h5 class="modal-title">Detail Pesanan <span id="modalOrderId"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="order-detail-item">
-                    <strong>No. Pesanan:</strong> <span id="modalOrderId">-</span>
+            <div class="modal-body p-4">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted" id="modalDate"></span>
+                    <span id="modalStatus"></span>
                 </div>
-                <div class="order-detail-item">
-                    <strong>Tanggal:</strong> <span id="modalDate">-</span>
+                
+                <h6 class="fw-bold mb-3"><i class="fas fa-box me-2 text-pink"></i> Daftar Produk</h6>
+                <ul class="list-unstyled mb-4" id="modalProducts">
+                    <!-- Products injected here -->
+                </ul>
+
+                <h6 class="fw-bold mb-2"><i class="fas fa-map-marker-alt me-2 text-pink"></i> Alamat Pengiriman</h6>
+                <p class="text-muted small mb-4" id="modalAddress">-</p>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <span class="fw-bold">Total Pembayaran</span>
+                    <span class="fw-bold text-pink fs-5" id="modalTotal"></span>
                 </div>
-                <div class="order-detail-item">
-                    <strong>Status:</strong> <span id="modalStatus">-</span>
-                </div>
-                <div class="order-detail-item">
-                    <strong>Total:</strong> <span id="modalTotal">-</span>
-                </div>
-                <div class="order-detail-item">
-                    <strong>Alamat Pengiriman:</strong>
-                    <p class="mb-0 mt-2" id="modalAddress">Jl. Merdeka No. 123, Jakarta Selatan</p>
-                </div>
-                <div class="order-detail-item">
-                    <strong>Produk:</strong>
-                    <ul class="mb-0 mt-2" id="modalProducts">
-                        <li>Buket Mawar Pink Premium (1x) - Rp 250.000</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+<!-- Modal Upload Bukti -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">
-                    <i class="fas fa-upload me-2"></i> Upload Bukti Pembayaran
-                </h5>
+                <h5 class="modal-title">Upload Bukti Pembayaran</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="uploadForm">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">No. Pesanan:</label>
-                        <input type="text" class="form-control" id="uploadOrderId" readonly>
+            <form id="uploadForm" action="" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <input type="hidden" name="id_pesanan" id="uploadOrderId">
+                    <p class="text-muted small mb-3">Silakan transfer ke salah satu rekening berikut:</p>
+                    <div class="alert alert-light border mb-3">
+                        <small class="d-block fw-bold text-dark">BCA: 1234567890 (BrownyGift)</small>
+                        <small class="d-block fw-bold text-dark">Mandiri: 0987654321 (BrownyGift)</small>
                     </div>
+
                     <div class="mb-3">
-                        <label for="proofFile" class="form-label fw-bold">
-                            <i class="fas fa-image me-1"></i> Pilih File Bukti Transfer
-                        </label>
-                        <input type="file" class="form-control" id="proofFile" accept="image/*" required>
-                        <small class="text-muted">Format: JPG, PNG. Maksimal 2MB</small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="bankAccount" class="form-label fw-bold">Rekening Pengirim</label>
-                        <input type="text" class="form-control" id="bankAccount" placeholder="Contoh: BCA - 1234567890" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="accountName" class="form-label fw-bold">Nama Pemilik Rekening</label>
-                        <input type="text" class="form-control" id="accountName" placeholder="Nama sesuai rekening" required>
+                        <label class="form-label">Bukti Transfer (Image)</label>
+                        <input type="file" class="form-control" name="bukti_pembayaran" accept="image/*" required>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-upload">
-                        <i class="fas fa-check me-2"></i> Upload
-                    </button>
+                    <button type="submit" class="btn btn-primary" style="background: #ff69b4; border:none;">Kirim Bukti</button>
                 </div>
             </form>
         </div>
@@ -427,58 +402,40 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const ordersData = [
+        @foreach($orders as $order)
         {
-            id: 'BG-2024-001',
-            date: '10/11/2024',
-            total: 850000,
-            status: 'Menunggu Pembayaran',
-            statusClass: 'status-pending',
-            address: 'Jl. Merdeka No. 123, Jakarta Selatan, 12345',
+            id: {{ $order->id_pesanan }},
+            displayId: 'BG-{{ date('Y', strtotime($order->created_at)) }}-{{ str_pad($order->id_pesanan, 3, '0', STR_PAD_LEFT) }}',
+            date: '{{ date('d/m/Y', strtotime($order->created_at)) }}',
+            total: {{ $order->total }},
+            status: '{{ ucfirst($order->statusPemesanan->status_pemesanan ?? "Unknown") }}',
+            statusClass: (() => {
+                const s = '{{ strtolower($order->statusPemesanan->status_pemesanan ?? "Unknown") }}';
+                if(s === 'diproses') return 'status-processing';
+                if(s === 'dikirim') return 'status-shipped';
+                if(s === 'selesai') return 'status-completed';
+                if(s === 'dibatalkan') return 'status-cancelled';
+                return 'status-pending';
+            })(),
+            address: 'Alamat Pengiriman Default', // In a real app we'd fetch this from address relation
             products: [
-                { name: 'Buket Mawar Pink Premium', qty: 2, price: 250000 },
-                { name: 'Buket Anniversary Mewah', qty: 1, price: 350000 }
+                @foreach($order->detailPesanan as $detail)
+                { 
+                    name: '{{ $detail->produk->nama_produk ?? "Produk Dihapus" }}', 
+                    qty: {{ $detail->quantity_per_produk }}, 
+                    price: {{ $detail->harga_produk }} 
+                },
+                @endforeach
             ]
         },
-        {
-            id: 'BG-2024-002',
-            date: '12/11/2024',
-            total: 500000,
-            status: 'Diproses',
-            statusClass: 'status-processing',
-            address: 'Jl. Sudirman No. 45, Jakarta Pusat, 10210',
-            products: [
-                { name: 'Buket Wedding Dream', qty: 1, price: 500000 }
-            ]
-        },
-        {
-            id: 'BG-2024-003',
-            date: '13/11/2024',
-            total: 200000,
-            status: 'Dikirim',
-            statusClass: 'status-shipped',
-            address: 'Jl. Gatot Subroto No. 78, Jakarta Selatan, 12930',
-            products: [
-                { name: 'Buket Birthday Delight', qty: 1, price: 200000 }
-            ]
-        },
-        {
-            id: 'BG-2024-004',
-            date: '8/11/2024',
-            total: 360000,
-            status: 'Selesai',
-            statusClass: 'status-completed',
-            address: 'Jl. Thamrin No. 12, Jakarta Pusat, 10340',
-            products: [
-                { name: 'Buket New Baby Pink', qty: 2, price: 180000 }
-            ]
-        }
+        @endforeach
     ];
 
     function showDetail(orderId) {
         const order = ordersData.find(o => o.id === orderId);
         if (!order) return;
 
-        document.getElementById('modalOrderId').textContent = order.id;
+        document.getElementById('modalOrderId').textContent = order.displayId;
         document.getElementById('modalDate').textContent = order.date;
         document.getElementById('modalStatus').innerHTML = `<span class="status-badge ${order.statusClass}">${order.status}</span>`;
         document.getElementById('modalTotal').textContent = `Rp ${order.total.toLocaleString('id-ID')}`;
@@ -494,31 +451,16 @@
     }
 
     function uploadProof(orderId) {
+        // Set dynamic action for the form
+        const form = document.getElementById('uploadForm');
+        form.action = `/dashboard/pesanansaya/${orderId}/upload`; // Fixed route prefix
+
         document.getElementById('uploadOrderId').value = orderId;
         const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
         modal.show();
     }
 
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const orderId = document.getElementById('uploadOrderId').value;
-        const file = document.getElementById('proofFile').files[0];
-        const bankAccount = document.getElementById('bankAccount').value;
-        const accountName = document.getElementById('accountName').value;
-
-        console.log('Upload data:', {
-            orderId,
-            file: file.name,
-            bankAccount,
-            accountName
-        });
-
-        alert('Bukti pembayaran berhasil diupload!\nPesanan Anda akan segera diproses.');
-
-        bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-        this.reset();
-    });
+    // Removed mock form listener to allow native submission
 
     function initPage() {
         const tbody = document.getElementById('ordersTableBody');

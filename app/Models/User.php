@@ -18,9 +18,11 @@ class User extends Authenticatable
 
     protected $fillable = [
         'id_role',
-        'nama',
+        'username', // Changed from 'nama'
         'email',
         'no_hp',
+        'tanggal_lahir',
+        'photo',
         'password',
     ];
 
@@ -32,5 +34,20 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo('App\Models\Role', 'id_role', 'id_role');
+    }
+
+    public function alamat()
+    {
+        return $this->hasMany(alamat::class, 'id_user', 'id_user');
+    }
+
+    public function keranjang()
+    {
+        return $this->hasMany(keranjang::class, 'id_user', 'id_user');
+    }
+
+    public function pesanan()
+    {
+        return $this->hasMany(pesanan::class, 'id_user', 'id_user');
     }
 }

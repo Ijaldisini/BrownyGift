@@ -18,7 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('id_produk');
             $table->foreign('id_produk')->references('id_produk')->on('produk')->onDelete('cascade');
             $table->integer('quantity_per_produk');
-            $table->timestamps();
+            $table->integer('harga_produk'); // Kolom harga saat beli
+            $table->integer('subtotal');
+            $table->timestamps(); // Ini akan membuat created_at dan updated_at
         });
     }
 

@@ -28,13 +28,13 @@ class AuthController extends Controller
             Auth::login($user);
 
             if ($user->id_role == 3)
-                return redirect()->route('dashboard.customer.index');
+                return redirect()->route('customer.index');
 
             if ($user->id_role == 2)
-                return redirect('/admin');
+                return redirect()->route('admin.dashboard');
 
             if ($user->id_role == 1)
-                return redirect('/owner');
+                return redirect()->route('owner.dashboard');
 
             return redirect('/dashboard/customer');
         }
@@ -48,7 +48,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email'    => 'required|email|unique:users,email',
-            'nama'     => 'required',
+            'nama' => 'required',
             'no_hp'    => 'required',
             'password' => 'required|min:6',
         ]);
@@ -56,7 +56,7 @@ class AuthController extends Controller
         $user = User::create([
             'id_role'     => '3',
             'email'       => $request->email,
-            'nama'        => $request->nama,
+            'nama'    => $request->nama,
             'no_hp'       => $request->no_hp,
             'password'    => bcrypt($request->password),
         ]);
