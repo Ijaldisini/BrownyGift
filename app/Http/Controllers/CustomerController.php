@@ -88,7 +88,7 @@ class CustomerController extends Controller
 
     public function produk()
     {
-        $products = Produk::all();
+        $products = produk::with('kategori')->get();
         return view('dashboard.customer.produk', compact('products'));
     }
 

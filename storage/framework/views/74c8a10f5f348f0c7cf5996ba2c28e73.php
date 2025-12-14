@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Katalog Produk - BrownyGift (Frontend Only)</title>
+  <title>Katalog Produk - BrownyGift</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
   <style>
     body{background:#fff0f5;font-family:Arial, sans-serif}
-    .sidebar{background:#ffc0cb;min-height:100vh;padding:20px 0;position:fixed;width:25%}
+    .sidebar{background:#ffc0cb;min-height:100vh;padding:20px 0;position:fixed;width:25%;z-index: 100;}
     .sidebar a{color:#fff;padding:15px 20px;display:block;text-decoration:none;font-size:1.1rem;transition:.3s}
     .sidebar a:hover,.sidebar a.active{background:#ff69b4}
     .sidebar .logout{position:absolute;bottom:20px;width:100%}
@@ -28,7 +28,7 @@
     .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:25px;margin-bottom:40px}
     .product-card{background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.05);transition:.3s;cursor:pointer}
     .product-card:hover{transform:translateY(-8px);box-shadow:0 15px 30px rgba(255,105,180,.2)}
-    .product-image{width:100%;height:250px;background:linear-gradient(135deg,#ffc0cb,#ffe4e1);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .product-image{width:100%;height:250px;background:#f8f9fa;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .product-image img{width:100%;height:100%;object-fit:cover}
     .product-rating{position:absolute;top:15px;right:15px;background:#fff;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.1)}
     .product-rating i{color:#ffd700}
@@ -38,18 +38,8 @@
     .product-description{color:#999;font-size:.9rem;margin-bottom:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .product-footer{display:flex;justify-content:space-between;align-items:center}
     .product-price{font-size:1.2rem;font-weight:700;color:#ff1493}
-    .product-price-old{font-size:.85rem;color:#999;text-decoration:line-through;display:block}
     .btn-add-cart{background:linear-gradient(135deg,#ff69b4,#ff1493);color:#fff;border:0;padding:8px 20px;border-radius:20px;font-size:.9rem;font-weight:600;transition:.3s}
     .btn-add-cart:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(255,105,180,.4)}
-    .pagination-wrapper{display:flex;justify-content:center;margin-top:40px}
-    .pagination{display:flex;gap:10px}
-    .page-item{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid #ffe4e1;border-radius:10px;background:#fff;color:#666;cursor:pointer;transition:.3s;text-decoration:none}
-    .page-item:hover{border-color:#ff69b4;color:#ff69b4}
-    .page-item.active{background:#ff69b4;border-color:#ff69b4;color:#fff}
-    .empty-state{text-align:center;padding:60px 20px}
-    .empty-state i{font-size:5rem;color:#ffc0cb;margin-bottom:20px}
-    .empty-state h4{color:#666;margin-bottom:10px}
-    .empty-state p{color:#999}
   </style>
 </head>
 <body>
@@ -58,31 +48,30 @@
   <div class="row">
     <div class="col-md-3 sidebar">
       <div class="text-center mb-5">
-                <div class="mb-3 d-flex justify-content-center">
-                    <?php if(auth()->user()->photo): ?>
-                        <img src="<?php echo e(asset('storage/' . auth()->user()->photo)); ?>" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
-                    <?php else: ?>
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
-                            <span class="fw-bold fs-3" style="color: #ff69b4;"><?php echo e(strtoupper(substr(auth()->user()->username, 0, 1))); ?></span>
-                        </div>
-                    <?php endif; ?>
+        <div class="mb-3 d-flex justify-content-center">
+            <?php if(auth()->user()->photo): ?>
+                <img src="<?php echo e(asset('storage/' . auth()->user()->photo)); ?>" alt="Profile" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+            <?php else: ?>
+                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border: 3px solid white;">
+                    <span class="fw-bold fs-3" style="color: #ff69b4;"><?php echo e(strtoupper(substr(auth()->user()->username, 0, 1))); ?></span>
                 </div>
+            <?php endif; ?>
+        </div>
         <h4 class="text-white fw-bold">BrownyGift</h4>
         <p class="text-white">Halo, <?php echo e(auth()->user()->username); ?>!</p>
       </div>
-       <a href="<?php echo e(route('customer.index')); ?>"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="<?php echo e(route('customer.profil')); ?>"><i class="fas fa-user"></i> Profil Saya</a>
-            <a href="<?php echo e(route('customer.produk')); ?>" class="active"><i class="fas fa-gift"></i> Produk</a>
-            <a href="<?php echo e(route('customer.keranjang')); ?>"><i class="fas fa-shopping-cart"></i> Keranjang</a>
-            <a href="<?php echo e(route('customer.pesanansaya')); ?>"><i class="fas fa-truck"></i> Pesanan Saya</a>
-            <a href="<?php echo e(route('customer.riwayat')); ?>"><i class="fas fa-history"></i> Riwayat Belanja</a>
+      <a href="<?php echo e(route('customer.index')); ?>"><i class="fas fa-home"></i> Dashboard</a>
+      <a href="<?php echo e(route('customer.profil')); ?>"><i class="fas fa-user"></i> Profil Saya</a>
+      <a href="<?php echo e(route('customer.produk')); ?>" class="active"><i class="fas fa-gift"></i> Produk</a>
+      <a href="<?php echo e(route('customer.keranjang')); ?>"><i class="fas fa-shopping-cart"></i> Keranjang</a>
+      <a href="<?php echo e(route('customer.pesanansaya')); ?>"><i class="fas fa-truck"></i> Pesanan Saya</a>
+      <a href="<?php echo e(route('customer.riwayat')); ?>"><i class="fas fa-history"></i> Riwayat Belanja</a>
 
-
-     <div class="logout">
-                <a href="<?php echo e(url('/logout')); ?>" onclick="return confirm('Yakin ingin keluar?')">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
+      <div class="logout">
+          <a href="<?php echo e(url('/logout')); ?>" onclick="return confirm('Yakin ingin keluar?')">
+              <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+      </div>
     </div>
 
     <div class="col-md-9 main-content">
@@ -99,23 +88,26 @@
       <div class="filter-buttons">
         <button class="filter-btn active" onclick="filterByCategory('all', event)"><i class="fas fa-th"></i> Semua</button>
         <button class="filter-btn" onclick="filterByCategory('Graduation', event)"><i class="fas fa-graduation-cap"></i> Graduation</button>
-        <button class="filter-btn" onclick="filterByCategory('Anniversary', event)"><i class="fas fa-heart"></i> Anniversary</button>
+        <button class="filter-btn" onclick="filterByCategory('Snack', event)"><i class="fas fa-cookie"></i> Snack</button>
+        <button class="filter-btn" onclick="filterByCategory('Pita Satin', event)"><i class="fas fa-ribbon"></i> Pita Satin</button>
         <button class="filter-btn" onclick="filterByCategory('Birthday', event)"><i class="fas fa-birthday-cake"></i> Birthday</button>
-        <button class="filter-btn" onclick="filterByCategory('Promo', event)"><i class="fas fa-tag"></i> Promo</button>
-        <button class="filter-btn" onclick="filterByCategory('Wedding', event)"><i class="fas fa-ring"></i> Wedding</button>
       </div>
 
       <div class="product-grid" id="productGrid">
         <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <div class="product-card" data-category="<?php echo e($product->kategori ?? 'All'); ?>">
+        <div class="product-card" data-category="<?php echo e($product->kategori->nama_kategori ?? 'Umum'); ?>">
           <div class="product-image">
-            <img src="<?php echo e(asset('storage/products/' . $product->gambar_produk)); ?>" alt="<?php echo e($product->nama_produk); ?>">
+            
+            <img src="<?php echo e(asset('images/' . $product->gambar_produk)); ?>" 
+                 alt="<?php echo e($product->nama_produk); ?>"
+                 onerror="this.onerror=null;this.src='https://via.placeholder.com/300x250/ff69b4/ffffff?text=No+Image';">
+            
             <div class="product-rating">
               <i class="fas fa-star"></i> 4.5
             </div>
           </div>
           <div class="product-body">
-            <div class="product-category"><?php echo e($product->kategori ?? 'Umum'); ?></div>
+            <div class="product-category"><?php echo e($product->kategori->nama_kategori ?? 'Umum'); ?></div>
             <div class="product-title"><?php echo e($product->nama_produk); ?></div>
             <div class="product-description"><?php echo e($product->deskripsi_produk); ?></div>
             <div class="product-footer">
@@ -133,23 +125,33 @@
           <h4>Produk Tidak Ditemukan</h4>
           <p>Coba kata kunci atau filter lain</p>
         </div>
-
-        <div class="pagination-wrapper">
-           <!-- Pagination could be implemented here -->
-        </div>
       </div>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const CURRENT_USERNAME = 'Customer';
-  document.getElementById('usernameSpan').textContent = CURRENT_USERNAME;
+  function filterProducts() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('.product-card');
+    let visibleCount = 0;
 
-  function filterByCategory(category, ev){
+    cards.forEach(card => {
+      const title = card.querySelector('.product-title').innerText.toLowerCase();
+      if (title.includes(input)) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    document.getElementById('emptyState').style.display = visibleCount ? 'none' : 'block';
+  }
+
+  function filterByCategory(category, ev) {
     const cards = document.querySelectorAll('.product-card');
     const buttons = document.querySelectorAll('.filter-btn');
-    const productGrid = document.getElementById('productGrid');
     const emptyState = document.getElementById('emptyState');
     let visibleCount = 0;
 
@@ -159,72 +161,49 @@
     const targetCat = category.toLowerCase();
 
     cards.forEach(card => {
-        const cardCat = (card.dataset.category || '').toLowerCase();
-        if (targetCat === 'all' || cardCat === targetCat){
-            card.style.display = 'block'; visibleCount++;
-        } else { 
-            card.style.display = 'none'; 
-        }
+      const cardCat = (card.dataset.category || '').toLowerCase();
+      if (targetCat === 'all' || cardCat === targetCat) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
     });
-
-    productGrid.style.display = visibleCount ? 'grid' : 'none';
     emptyState.style.display = visibleCount ? 'none' : 'block';
   }
 
-  function addToCart(id, btn){
-    // const btn = ev.currentTarget;
+  function addToCart(id, btn) {
     const originalContent = btn.innerHTML;
-    const originalBg = btn.style.background;
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     btn.disabled = true;
 
-    fetch('<?php echo e(route('customer.keranjang.add')); ?>', {
+    fetch('<?php echo e(route("customer.keranjang.add")); ?>', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
         },
-        body: JSON.stringify({
-            id_produk: id,
-            quantity: 1
-        })
+        body: JSON.stringify({ id_produk: id, quantity: 1 })
     })
-    .then(async response => {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json();
-        } else {
-            const text = await response.text();
-            throw new Error('Server returned non-JSON: ' + text.substring(0, 100));
-        }
-    })
+    .then(response => response.json())
     .then(data => {
         if(data.success) {
-            btn.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
+            btn.innerHTML = '<i class="fas fa-check"></i>';
             btn.style.background = '#4caf50';
             setTimeout(() => {
                 btn.innerHTML = originalContent;
-                btn.style.background = originalBg;
+                btn.style.background = '';
                 btn.disabled = false;
             }, 2000);
         } else {
-            // Check for validation errors
-            if(data.errors) {
-                let msg = '';
-                for(let key in data.errors) msg += data.errors[key][0] + '\n';
-                alert('Gagal: \n' + msg);
-            } else {
-                alert('Gagal menambahkan: ' + (data.message || 'Error'));
-            }
+            alert('Gagal: ' + (data.message || 'Error'));
             btn.innerHTML = originalContent;
             btn.disabled = false;
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan sistem: ' + error.message);
         btn.innerHTML = originalContent;
         btn.disabled = false;
     });
