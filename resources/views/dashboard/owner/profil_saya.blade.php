@@ -1,0 +1,72 @@
+@extends('layouts.owner')
+
+@section('title', 'Profil Saya')
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+@section('content')
+
+<h2 class="text-3xl font-bold text-pink-800 mb-8 text-center">
+    Profil Saya
+</h2>
+
+<div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-8">
+
+    @if(session('success'))
+        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-xl text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <form method="POST" action="/owner/profil_saya" class="space-y-5">
+        @csrf
+
+        <div>
+            <label class="block font-semibold mb-1">Nama</label>
+            <input type="text" name="nama"
+                   value="{{ $user->nama }}"
+                   class="w-full rounded-xl border-gray-300 focus:ring-pink-500 focus:border-pink-500"
+                   required>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Email</label>
+            <input type="email" name="email"
+                   value="{{ $user->email }}"
+                   class="w-full rounded-xl border-gray-300 focus:ring-pink-500 focus:border-pink-500"
+                   required>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Nomor HP</label>
+            <input type="text" name="no_hp"
+                   value="{{ $user->no_hp }}"
+                   class="w-full rounded-xl border-gray-300 focus:ring-pink-500 focus:border-pink-500"
+                   required>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">
+                Password Baru
+                <span class="text-sm text-gray-400">(kosongkan jika tidak diganti)</span>
+            </label>
+            <input type="password" name="password"
+                   class="w-full rounded-xl border-gray-300 focus:ring-pink-500 focus:border-pink-500">
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="/owner"
+               class="text-gray-500 hover:text-pink-600 transition">
+                ← Kembali
+            </a>
+
+            <button type="submit"
+                    class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-6 py-3 rounded-xl transition">
+                Simpan Perubahan
+            </button>
+        </div>
+    </form>
+
+</div>
+
+@endsection

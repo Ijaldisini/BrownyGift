@@ -1,0 +1,245 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Quicksand", sans-serif;
+}
+
+body {
+    background-color: #fff5f7;
+    background: linear-gradient(to right, #fce4ec, #fff5f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.flower-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.flower {
+    position: absolute;
+    display: block;
+    font-size: 24px;
+    user-select: none;
+    top: -50px;
+    animation: fall linear infinite;
+}
+
+.flower:nth-child(1) {
+    left: 10%;
+    animation-duration: 10s;
+    animation-delay: 0s;
+}
+.flower:nth-child(2) {
+    left: 25%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+}
+.flower:nth-child(3) {
+    left: 40%;
+    animation-duration: 8s;
+    animation-delay: 4s;
+}
+.flower:nth-child(4) {
+    left: 55%;
+    animation-duration: 15s;
+    animation-delay: 1s;
+}
+.flower:nth-child(5) {
+    left: 70%;
+    animation-duration: 11s;
+    animation-delay: 5s;
+}
+.flower:nth-child(6) {
+    left: 85%;
+    animation-duration: 9s;
+    animation-delay: 3s;
+}
+.flower:nth-child(7) {
+    left: 95%;
+    animation-duration: 13s;
+    animation-delay: 7s;
+}
+.flower:nth-child(8) {
+    left: 5%;
+    animation-duration: 14s;
+    animation-delay: 2s;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+.container {
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 10px 25px rgba(236, 72, 153, 0.1);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+.container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
+
+.container input {
+    background-color: #fdf2f8;
+    border: 1px solid #fbcfe8;
+    margin: 8px 0;
+    padding: 12px 15px;
+    font-size: 13px;
+    border-radius: 12px;
+    width: 100%;
+    outline: none;
+    transition: 0.3s;
+}
+
+.container button {
+    background-color: #ec4899;
+    color: #fff;
+    font-size: 12px;
+    padding: 12px 45px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* --- Perbaikan Form Container --- */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5; /* Muncul ke depan saat aktif */
+}
+
+/* --- Toggle Panel --- */
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    z-index: 1000;
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+}
+
+.toggle {
+    background: linear-gradient(to right, #ec4899, #f472b6);
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
+/* --- Password Show/Hide Style --- */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #ec4899;
+    display: flex;
+}
+
+.hidden {
+    display: none !important;
+}
