@@ -39,7 +39,7 @@
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto">
-            <a href="/owner/karyawan_tambah"
+            <a href="/owner/karyawan"
                 class="w-full md:w-auto bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all font-bold shadow-lg shadow-pink-200">
                 <i class="bi bi-plus-lg"></i>
                 Tambah Karyawan
