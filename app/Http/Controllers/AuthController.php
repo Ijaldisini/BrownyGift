@@ -31,10 +31,10 @@ class AuthController extends Controller
                 return redirect()->route('customer.index');
 
             if ($user->id_role == 2)
-                return redirect()->route('admin.dashboard');
+                return redirect('/admin');
 
             if ($user->id_role == 1)
-                return redirect()->route('owner.dashboard');
+                return redirect('/owner');
 
             return redirect('/dashboard/customer');
         }
