@@ -16,10 +16,6 @@
                     Kelola pesanan dan produk toko
                 </p>
             </div>
-            <div class="hidden md:flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm border border-pink-100">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span class="text-sm text-gray-600">Online</span>
-            </div>
         </div>
     </div>
 
