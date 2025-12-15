@@ -34,6 +34,8 @@
             <?php echo $__env->yieldContent('content'); ?>
         </div>
     </div>
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
-</html><?php /**PATH D:\COLLEGE LIFE\SEMESTER 3\PEMROGRAMAN WEBSITE\PROJECT\PROJECT NEW NEW\BrownyGift\resources\views/layouts/admin.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH D:\COLLEGE LIFE\SEMESTER 3\PEMROGRAMAN WEBSITE\PROJECT\PROJECT NEW NEW\BrownyGift\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

@@ -44,7 +44,6 @@
                             alt="Admin Photo"
                             class="w-40 h-40 rounded-full object-cover border-8 border-white shadow-2xl relative z-10"
                             onerror="this.src='https://ui-avatars.com/api/?name=<?php echo e(urlencode($user->nama ?? 'Admin BrownyGift')); ?>&size=160&background=ff69b4&color=fff&bold=true&font-size=0.4'">
-                        
                     </div>
                 </div>
                 <div class="mt-6">

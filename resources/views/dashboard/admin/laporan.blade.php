@@ -14,7 +14,7 @@
                     </div>
                     Laporan Penjualan
                 </h2>
-                <p class="text-gray-600 ml-16">Grafik dan analisis penjualan produk</p>
+                <p class="text-gray-600 ml-16">Grafik dan analisis penjualan produk - {{ $namaBulan ?? 'Bulan Ini' }} {{ $tahunDipilih ?? date('Y') }}</p>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
                         <i class="bi bi-star-fill text-2xl"></i>
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold mb-2 truncate">{{ $produkTerlaris ?? '-' }}</h3>
+                <h3 class="text-2xl font-bold mb-2 truncate" title="{{ $produkTerlaris ?? '-' }}">{{ $produkTerlaris ?? '-' }}</h3>
                 <p class="text-sm opacity-75 flex items-center">
                     <i class="bi bi-trophy mr-1"></i>
                     Best seller
@@ -102,16 +102,30 @@
                     <i class="bi bi-bar-chart-fill text-white text-xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">
-                    Grafik Penjualan Produk
+                    Grafik Penjualan Harian
                 </h3>
             </div>
             <div class="flex gap-3">
-                <select class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
-                    <option>Bulan Ini</option>
-                    <option>3 Bulan Terakhir</option>
-                    <option>6 Bulan Terakhir</option>
-                    <option>Tahun Ini</option>
-                </select>
+                <form method="GET" action="{{ route('admin.laporan.laporan') }}" class="flex gap-3">
+                    <select name="bulan" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
+                        @for($m = 1; $m <= 12; $m++)
+                            <option value="{{ $m }}" {{ ($bulanDipilih ?? date('m')) == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endfor
+                    </select>
+                    <select name="tahun" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
+                        @for($y = date('Y'); $y >= 2020; $y--)
+                            <option value="{{ $y }}" {{ ($tahunDipilih ?? date('Y')) == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+                    <button type="submit" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center space-x-2">
+                        <i class="bi bi-search"></i>
+                        <span>Tampilkan</span>
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -227,115 +241,120 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('chartPenjualan').getContext('2d');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Chart.js Script Loaded');
 
-    // Create gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(236, 72, 153, 0.9)');
-    gradient.addColorStop(0.5, 'rgba(251, 113, 133, 0.8)');
-    gradient.addColorStop(1, 'rgba(255, 182, 193, 0.7)');
+        const canvas = document.getElementById('chartPenjualan');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($labels ?? []) !!},
-            datasets: [{
-                label: 'Jumlah Produk Terjual',
-                data: {!! json_encode($data ?? []) !!},
-                backgroundColor: gradient,
-                borderColor: 'rgba(236, 72, 153, 1)',
-                borderWidth: 3,
-                borderRadius: 12,
-                hoverBackgroundColor: 'rgba(236, 72, 153, 1)',
-                hoverBorderColor: 'rgba(219, 39, 119, 1)',
-                hoverBorderWidth: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 16,
-                            weight: 'bold',
-                            family: 'system-ui'
-                        },
-                        color: '#374151',
-                        padding: 20,
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                    padding: 16,
-                    cornerRadius: 12,
-                    titleFont: {
-                        size: 16,
-                        weight: 'bold'
+        if (!canvas) {
+            console.error('❌ Canvas element tidak ditemukan');
+            return;
+        }
+
+        console.log('✅ Canvas element ditemukan');
+
+        // Get data dari controller
+        const labels = @json($labels ?? []);
+        const data = @json($data ?? []);
+
+        console.log('📊 Data dari Controller:');
+        console.log('Labels:', labels);
+        console.log('Data:', data);
+
+        // Cek data kosong
+        if (!labels || labels.length === 0) {
+            console.warn('⚠️ Tidak ada data');
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillStyle = '#ec4899';
+            ctx.textAlign = 'center';
+            ctx.fillText('Belum ada data penjualan untuk periode ini', canvas.width / 2, canvas.height / 2);
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(236, 72, 153, 0.9)');
+        gradient.addColorStop(0.5, 'rgba(251, 113, 133, 0.8)');
+        gradient.addColorStop(1, 'rgba(255, 182, 193, 0.7)');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah Produk Terjual',
+                    data: data,
+                    backgroundColor: gradient,
+                    borderColor: 'rgba(236, 72, 153, 1)',
+                    borderWidth: 3,
+                    borderRadius: 12,
+                    hoverBackgroundColor: 'rgba(236, 72, 153, 1)',
+                    hoverBorderColor: 'rgba(219, 39, 119, 1)',
+                    hoverBorderWidth: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: { size: 16, weight: 'bold', family: 'system-ui' },
+                            color: '#374151',
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
                     },
-                    bodyFont: {
-                        size: 14
-                    },
-                    displayColors: false,
-                    callbacks: {
-                        label: function(context) {
-                            return '📦 ' + context.dataset.label + ': ' + context.parsed.y + ' unit';
+                    tooltip: {
+                        backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                        padding: 16,
+                        cornerRadius: 12,
+                        titleFont: { size: 16, weight: 'bold' },
+                        bodyFont: { size: 14 },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return '📦 ' + context.dataset.label + ': ' + context.parsed.y + ' unit';
+                            }
                         }
                     }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: {
-                            size: 13,
-                            weight: '600'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { size: 13, weight: '600' },
+                            color: '#6b7280',
+                            padding: 10
                         },
-                        color: '#6b7280',
-                        padding: 10
+                        grid: {
+                            color: 'rgba(251, 113, 133, 0.1)',
+                            drawBorder: false,
+                            lineWidth: 2
+                        },
+                        border: { display: false }
                     },
-                    grid: {
-                        color: 'rgba(251, 113, 133, 0.1)',
-                        drawBorder: false,
-                        lineWidth: 2
-                    },
-                    border: {
-                        display: false
+                    x: {
+                        ticks: {
+                            font: { size: 13, weight: '600' },
+                            color: '#6b7280',
+                            padding: 10
+                        },
+                        grid: { display: false },
+                        border: { display: false }
                     }
                 },
-                x: {
-                    ticks: {
-                        font: {
-                            size: 13,
-                            weight: '600'
-                        },
-                        color: '#6b7280',
-                        padding: 10
-                    },
-                    grid: {
-                        display: false
-                    },
-                    border: {
-                        display: false
-                    }
-                }
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
+                interaction: { mode: 'index', intersect: false },
+                animation: { duration: 1500, easing: 'easeInOutQuart' }
             }
-        }
+        });
+
+        console.log('✅ Chart berhasil dibuat!');
     });
 </script>
 @endpush
