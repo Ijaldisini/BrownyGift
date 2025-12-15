@@ -45,4 +45,14 @@ class Pesanan extends Model
     {
         return $this->belongsTo(metode_pembayaran::class, 'id_metode_pembayaran', 'id_metode_pembayaran');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    public function alamat()
+    {
+        return $this->belongsTo(Alamat::class, 'id_alamat', 'id_alamat');
+    }
 }

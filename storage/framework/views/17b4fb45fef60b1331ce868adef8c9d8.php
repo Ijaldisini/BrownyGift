@@ -1,8 +1,6 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Tambah Produk'); ?>
 
-@section('title', 'Tambah Produk')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="max-w-4xl mx-auto animate-fadeIn">
     <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-pink-100">
         <!-- Header with Gradient -->
@@ -17,7 +15,7 @@
                     </h2>
                     <p class="text-pink-100">Lengkapi form untuk menambahkan produk</p>
                 </div>
-                <a href="{{ route('admin.produk.index') }}"
+                <a href="<?php echo e(route('admin.produk.index')); ?>"
                    class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 border border-white/20">
                     <i class="bi bi-arrow-left"></i>
                     <span>Kembali</span>
@@ -26,8 +24,8 @@
         </div>
 
         <!-- Form -->
-        <form action="{{ route('admin.produk.store') }}" method="POST" enctype="multipart/form-data" class="p-8">
-            @csrf
+        <form action="<?php echo e(route('admin.produk.store')); ?>" method="POST" enctype="multipart/form-data" class="p-8">
+            <?php echo csrf_field(); ?>
 
             <!-- Nama Produk -->
             <div class="mb-8">
@@ -38,17 +36,32 @@
                     Nama Produk <span class="text-pink-500 ml-1">*</span>
                 </label>
                 <input type="text"
-                       class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('nama_produk') border-red-500 @enderror hover:border-pink-300"
+                       class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['nama_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300"
                        name="nama_produk"
-                       value="{{ old('nama_produk') }}"
+                       value="<?php echo e(old('nama_produk')); ?>"
                        placeholder="Contoh: Buket Mawar Pink Premium"
                        required>
-                @error('nama_produk')
+                <?php $__errorArgs = ['nama_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                     <p class="mt-2 text-sm text-red-600 flex items-center">
                         <i class="bi bi-exclamation-circle mr-1"></i>
-                        {{ $message }}
+                        <?php echo e($message); ?>
+
                     </p>
-                @enderror
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
 
             <!-- Gambar Produk -->
@@ -61,17 +74,32 @@
                 </label>
                 <div class="relative">
                     <input type="file"
-                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('gambar_produk') border-red-500 @enderror hover:border-pink-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-pink-500 file:to-rose-500 file:text-white file:font-medium file:cursor-pointer hover:file:from-pink-600 hover:file:to-rose-600"
+                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['gambar_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-pink-500 file:to-rose-500 file:text-white file:font-medium file:cursor-pointer hover:file:from-pink-600 hover:file:to-rose-600"
                            name="gambar_produk"
                            accept="image/*"
                            id="imageInput"
                            required>
-                    @error('gambar_produk')
+                    <?php $__errorArgs = ['gambar_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <i class="bi bi-exclamation-circle mr-1"></i>
-                            {{ $message }}
+                            <?php echo e($message); ?>
+
                         </p>
-                    @enderror
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
 
                 <!-- Image Preview -->
@@ -101,22 +129,38 @@
                     </div>
                     Kategori <span class="text-pink-500 ml-1">*</span>
                 </label>
-                <select class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('id_kategori') border-red-500 @enderror hover:border-pink-300 bg-white"
+                <select class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['id_kategori'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300 bg-white"
                         name="id_kategori"
                         required>
                     <option value="">Pilih Kategori</option>
-                    @foreach ($kategori as $k)
-                        <option value="{{ $k->id_kategori }}" {{ old('id_kategori') == $k->id_kategori ? 'selected' : '' }}>
-                            {{ $k->nama_kategori }}
+                    <?php $__currentLoopData = $kategori; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($k->id_kategori); ?>" <?php echo e(old('id_kategori') == $k->id_kategori ? 'selected' : ''); ?>>
+                            <?php echo e($k->nama_kategori); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
-                @error('id_kategori')
+                <?php $__errorArgs = ['id_kategori'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                     <p class="mt-2 text-sm text-red-600 flex items-center">
                         <i class="bi bi-exclamation-circle mr-1"></i>
-                        {{ $message }}
+                        <?php echo e($message); ?>
+
                     </p>
-                @enderror
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
 
             <!-- Deskripsi -->
@@ -127,17 +171,32 @@
                     </div>
                     Deskripsi Produk <span class="text-pink-500 ml-1">*</span>
                 </label>
-                <textarea class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('deskripsi_produk') border-red-500 @enderror hover:border-pink-300"
+                <textarea class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['deskripsi_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300"
                           name="deskripsi_produk"
                           rows="5"
                           placeholder="Jelaskan detail produk, bahan, ukuran, dan keunikannya..."
-                          required>{{ old('deskripsi_produk') }}</textarea>
-                @error('deskripsi_produk')
+                          required><?php echo e(old('deskripsi_produk')); ?></textarea>
+                <?php $__errorArgs = ['deskripsi_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                     <p class="mt-2 text-sm text-red-600 flex items-center">
                         <i class="bi bi-exclamation-circle mr-1"></i>
-                        {{ $message }}
+                        <?php echo e($message); ?>
+
                     </p>
-                @enderror
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
 
             <!-- Harga & Stok -->
@@ -151,18 +210,33 @@
                         Harga (Rp) <span class="text-pink-500 ml-1">*</span>
                     </label>
                     <input type="number"
-                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('harga_produk') border-red-500 @enderror hover:border-pink-300"
+                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['harga_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300"
                            name="harga_produk"
-                           value="{{ old('harga_produk') }}"
+                           value="<?php echo e(old('harga_produk')); ?>"
                            placeholder="250000"
                            min="0"
                            required>
-                    @error('harga_produk')
+                    <?php $__errorArgs = ['harga_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <i class="bi bi-exclamation-circle mr-1"></i>
-                            {{ $message }}
+                            <?php echo e($message); ?>
+
                         </p>
-                    @enderror
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
 
                 <!-- Stok -->
@@ -174,18 +248,33 @@
                         Stok <span class="text-pink-500 ml-1">*</span>
                     </label>
                     <input type="number"
-                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all @error('stok_produk') border-red-500 @enderror hover:border-pink-300"
+                           class="w-full px-5 py-3.5 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all <?php $__errorArgs = ['stok_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> hover:border-pink-300"
                            name="stok_produk"
-                           value="{{ old('stok_produk') }}"
+                           value="<?php echo e(old('stok_produk')); ?>"
                            placeholder="15"
                            min="0"
                            required>
-                    @error('stok_produk')
+                    <?php $__errorArgs = ['stok_produk'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <i class="bi bi-exclamation-circle mr-1"></i>
-                            {{ $message }}
+                            <?php echo e($message); ?>
+
                         </p>
-                    @enderror
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
             </div>
 
@@ -195,7 +284,7 @@
                     <i class="bi bi-check-circle text-xl"></i>
                     <span>Simpan Produk</span>
                 </button>
-                <a href="{{ route('admin.produk.index') }}" class="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 px-8 py-4 rounded-xl font-bold transition-all duration-300 inline-flex items-center justify-center space-x-2 border-2 border-gray-300">
+                <a href="<?php echo e(route('admin.produk.index')); ?>" class="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 px-8 py-4 rounded-xl font-bold transition-all duration-300 inline-flex items-center justify-center space-x-2 border-2 border-gray-300">
                     <i class="bi bi-x-circle"></i>
                     <span>Batal</span>
                 </a>
@@ -214,9 +303,9 @@
     animation: fadeIn 0.6s ease-out;
 }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     // Image Preview
     document.getElementById('imageInput').addEventListener('change', function(e) {
@@ -243,4 +332,6 @@
         }
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\COLLEGE LIFE\SEMESTER 3\PEMROGRAMAN WEBSITE\PROJECT\PROJECT NEW NEW\BrownyGift\resources\views/dashboard/admin/produk/create.blade.php ENDPATH**/ ?>

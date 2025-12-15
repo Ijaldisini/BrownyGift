@@ -8,6 +8,9 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileAdminController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PesananController;
+use App\Http\Controllers\DashboardAdminController;
 
 // LANDING PAGE & AUTHENTICATION
 Route::get('/', [HomeController::class, 'index'])->name('landing');
@@ -21,16 +24,26 @@ Route::middleware(['auth'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/', fn() => view('dashboard.admin.index'))->name('dashboard');
+        Route::get('/', [DashboardAdminController::class, 'index'])->name('dashboard.index');
+
         Route::get('/produk', [ProductController::class, 'index'])->name('produk.index');
         Route::get('/produk/create', [ProductController::class, 'create'])->name('produk.create');
         Route::post('/produk/create', [ProductController::class, 'store'])->name('produk.store');
         Route::get('/produk/edit/{id}', [ProductController::class, 'edit'])->name('produk.edit');
         Route::put('/produk/edit/{id}', [ProductController::class, 'update'])->name('produk.update');
         Route::delete('/produk/hapus/{id}', [ProductController::class, 'destroy'])->name('produk.delete');
+
         Route::get('/profile', [ProfileAdminController::class, 'index'])->name('profile.index');
         Route::put('/profile', [ProfileAdminController::class, 'update'])->name('profile.update');
         Route::put('/profile/password', [ProfileAdminController::class, 'updatePassword'])->name('profile.password');
+
+        Route::get('/laporan', [LaporanController::class, 'laporan'])->name('laporan.laporan');
+
+        Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+        Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.show');
+
+        Route::put('/pesanan/{id}/update-status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+        Route::put('/pesanan/{id}/update-pembayaran', [PesananController::class, 'updatePembayaran'])->name('pesanan.updatePembayaran');
     });
 
 // OWNER DASHBOARD
@@ -60,7 +73,7 @@ Route::middleware(['auth'])
 
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
-    // Route::get('/', [CustomerController::class, 'dashboard'])->name('customer.dashboard'); 
+    // Route::get('/', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
 
     Route::get('/index', [CustomerController::class, 'dashboard'])->name('customer.index');
     Route::get('/profil', [CustomerController::class, 'profil'])->name('customer.profil');
