@@ -38,7 +38,7 @@ Route::middleware(['auth'])
     ->prefix('owner')
     ->name('owner.')
     ->group(function () {
-        Route::get('/', fn() => view('dashboard.owner.index'))->name('owner.dashboard');
+        Route::get('/', [OwnerController::class, 'dashboard'])->name('dashboard');
         Route::get('/karyawan', [OwnerController::class, 'karyawanForm']);
         Route::post('/karyawan', [OwnerController::class, 'storeKaryawan']);
         Route::get('/karyawan_list', [OwnerController::class, 'listKaryawan'])->middleware('auth');
@@ -54,13 +54,14 @@ Route::middleware(['auth'])
 
         Route::get('/laporan_penjualan', [OwnerController::class, 'laporanPenjualan'])->middleware('auth');
 
-        Route::get('/profil_saya', [OwnerController::class, 'profilSaya']);
-        Route::post('/profil_saya', [OwnerController::class, 'updateProfilSaya']);
+        Route::get('/profil_saya', [OwnerController::class, 'profilSaya'])->middleware('auth');
+        Route::get('/profil_saya_edit', [OwnerController::class, 'editProfilSaya'])->middleware('auth');
+        Route::post('/profil_saya', [OwnerController::class, 'updateProfilSaya'])->middleware('auth');
     });
 
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
-    // Route::get('/', [CustomerController::class, 'dashboard'])->name('customer.dashboard'); 
+    // Route::get('/', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
 
     Route::get('/index', [CustomerController::class, 'dashboard'])->name('customer.index');
     Route::get('/profil', [CustomerController::class, 'profil'])->name('customer.profil');

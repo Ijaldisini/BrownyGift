@@ -18,7 +18,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'id_role',
-        'username', // Changed from 'nama'
+        'nama',
         'email',
         'no_hp',
         'tanggal_lahir',
@@ -28,7 +28,6 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
-        // 'remember_token',
     ];
 
     public function role()

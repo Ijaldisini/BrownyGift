@@ -32,6 +32,44 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id_pesanan
+ * @property int $id_user
+ * @property int $id_alamat
+ * @property int $id_metode_pembayaran
+ * @property int $id_status_pembayaran
+ * @property int $id_status_pemesanan
+ * @property int $total
+ * @property string|null $bukti_pembayaran
+ * @property string|null $catatan
+ * @property string $tanggal_pemesanan
+ * @property string|null $tanggal_pengambilan
+ * @property string|null $tanggal_konfirmasi
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\detail_pesanan> $detailPesanan
+ * @property-read int|null $detail_pesanan_count
+ * @property-read \App\Models\metode_pembayaran $metodePembayaran
+ * @property-read \App\Models\status_pembayaran $statusPembayaran
+ * @property-read \App\Models\status_pemesanan $statusPemesanan
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereBuktiPembayaran($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereCatatan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdAlamat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdMetodePembayaran($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdPesanan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdStatusPembayaran($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdStatusPemesanan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereIdUser($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereTanggalKonfirmasi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereTanggalPemesanan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereTanggalPengambilan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pesanan whereTotal($value)
+ */
+	class Pesanan extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * @property int $id_produk
  * @property int $id_kategori
  * @property string $nama_produk
@@ -104,7 +142,7 @@ namespace App\Models{
  * @property-read int|null $keranjang_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\pesanan> $pesanan
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pesanan> $pesanan
  * @property-read int|null $pesanan_count
  * @property-read \App\Models\Role $role
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -183,7 +221,6 @@ namespace App\Models{
  * @property int $quantity_per_produk
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\pesanan $pesanan
  * @property-read \App\Models\Produk $produk
  * @method static \Illuminate\Database\Eloquent\Builder<static>|detail_pesanan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|detail_pesanan newQuery()
@@ -259,44 +296,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id_pesanan
- * @property int $id_user
- * @property int $id_alamat
- * @property int $id_metode_pembayaran
- * @property int $id_status_pembayaran
- * @property int $id_status_pemesanan
- * @property int $total
- * @property string|null $bukti_pembayaran
- * @property string|null $catatan
- * @property string $tanggal_pemesanan
- * @property string|null $tanggal_pengambilan
- * @property string|null $tanggal_konfirmasi
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\detail_pesanan> $detailPesanan
- * @property-read int|null $detail_pesanan_count
- * @property-read \App\Models\metode_pembayaran $metodePembayaran
- * @property-read \App\Models\status_pembayaran $statusPembayaran
- * @property-read \App\Models\status_pemesanan $statusPemesanan
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereBuktiPembayaran($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereCatatan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdAlamat($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdMetodePembayaran($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdPesanan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdStatusPembayaran($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdStatusPemesanan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereIdUser($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereTanggalKonfirmasi($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereTanggalPemesanan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereTanggalPengambilan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|pesanan whereTotal($value)
- */
-	class pesanan extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * @property int $id_status_pembayaran
  * @property string $status_pembayaran
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -318,7 +317,7 @@ namespace App\Models{
  * @property string $status_pemesanan
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\pesanan> $pesanans
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pesanan> $pesanans
  * @property-read int|null $pesanans_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|status_pemesanan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|status_pemesanan newQuery()

@@ -8,6 +8,11 @@ class Pesanan extends Model
 {
     protected $table = 'pesanan';
     protected $primaryKey = 'id_pesanan';
+    protected $casts = [
+        'tanggal_pemesanan'   => 'datetime',
+        'tanggal_pengambilan' => 'datetime',
+        'tanggal_konfirmasi'  => 'datetime',
+    ];
 
     // Matikan timestamps otomatis karena tidak ada kolom updated_at
     public $timestamps = false;
