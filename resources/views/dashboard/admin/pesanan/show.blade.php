@@ -61,6 +61,8 @@
                 </div>
             </div>
 
+
+
             <!-- Info Pesanan -->
             <div class="bg-gradient-to-br from-pink-50 via-rose-50 to-pink-50 rounded-2xl p-8 mb-8 border border-pink-200">
                 <div class="flex items-center space-x-3 mb-6">
@@ -113,6 +115,28 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Bukti Pembayaran -->
+            @if($pesanan->bukti_pembayaran)
+            <div class="bg-gradient-to-br from-purple-50 via-fuchsia-50 to-purple-50 rounded-2xl p-8 mb-8 border border-purple-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-fuchsia-500 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-file-earmark-check text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent">
+                        Bukti Pembayaran
+                    </h3>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-purple-100">
+                    <div class="flex justify-center">
+                        <img src="{{ asset('images/bukti/' . $pesanan->bukti_pembayaran) }}"
+                             alt="Bukti Pembayaran"
+                             class="max-w-sm w-full h-auto rounded-xl shadow-lg border-2 border-purple-200">
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <!-- Produk Dipesan -->
             <div class="mb-8">

@@ -20,7 +20,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <!-- Total Penjualan -->
         <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full"></div>
@@ -74,29 +74,11 @@
                 </p>
             </div>
         </div>
-
-        <!-- Rata-rata -->
-        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full"></div>
-            <div class="relative">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-semibold opacity-90 uppercase tracking-wider">Rata-rata/Hari</span>
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i class="bi bi-graph-up text-2xl"></i>
-                    </div>
-                </div>
-                <h3 class="text-5xl font-bold mb-2">{{ $rataRata ?? 0 }}</h3>
-                <p class="text-sm opacity-75 flex items-center">
-                    <i class="bi bi-calendar-day mr-1"></i>
-                    Penjualan harian
-                </p>
-            </div>
-        </div>
     </div>
 
     <!-- Chart Card -->
     <div class="bg-white rounded-3xl shadow-xl p-10 mb-10 border border-pink-100">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
             <div class="flex items-center space-x-3">
                 <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg">
                     <i class="bi bi-bar-chart-fill text-white text-xl"></i>
@@ -105,28 +87,26 @@
                     Grafik Penjualan Harian
                 </h3>
             </div>
-            <div class="flex gap-3">
-                <form method="GET" action="{{ route('admin.laporan.laporan') }}" class="flex gap-3">
-                    <select name="bulan" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}" {{ ($bulanDipilih ?? date('m')) == $m ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-                    <select name="tahun" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
-                        @for($y = date('Y'); $y >= 2020; $y--)
-                            <option value="{{ $y }}" {{ ($tahunDipilih ?? date('Y')) == $y ? 'selected' : '' }}>
-                                {{ $y }}
-                            </option>
-                        @endfor
-                    </select>
-                    <button type="submit" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center space-x-2">
-                        <i class="bi bi-search"></i>
-                        <span>Tampilkan</span>
-                    </button>
-                </form>
-            </div>
+            <form method="GET" action="{{ route('admin.laporan.laporan') }}" class="flex flex-wrap gap-3">
+                <select name="bulan" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
+                    @for($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ ($bulanDipilih ?? date('m')) == $m ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                        </option>
+                    @endfor
+                </select>
+                <select name="tahun" class="px-6 py-3 border-2 border-pink-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all hover:border-pink-300 bg-gradient-to-r from-white to-pink-50">
+                    @for($y = date('Y'); $y >= 2020; $y--)
+                        <option value="{{ $y }}" {{ ($tahunDipilih ?? date('Y')) == $y ? 'selected' : '' }}>
+                            {{ $y }}
+                        </option>
+                    @endfor
+                </select>
+                <button type="submit" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center space-x-2">
+                    <i class="bi bi-search"></i>
+                    <span>Tampilkan</span>
+                </button>
+            </form>
         </div>
 
         <div class="bg-gradient-to-br from-pink-50 via-rose-50 to-pink-50 rounded-2xl p-8 border border-pink-200">

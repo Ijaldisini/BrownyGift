@@ -323,7 +323,7 @@
                     <!-- Cart Item -->
                     <div class="cart-item" data-id="<?php echo e($item->id_keranjang); ?>">
                         <div class="cart-item-image">
-                            <img src="<?php echo e(asset('storage/products/' . $item->produk->gambar_produk)); ?>" alt="<?php echo e($item->produk->nama_produk); ?>">
+                            <img src="<?php echo e(asset('images/' . $item->produk->gambar_produk)); ?>" alt="<?php echo e($item->produk->nama_produk); ?>">
                         </div>
                         <div class="cart-item-details">
                             <div class="cart-item-category">Product</div>
@@ -332,8 +332,8 @@
                         </div>
                         <div class="cart-item-actions">
                             <div class="quantity-control">
-                                <!-- Note: For simplicity, update quantity via AJAX or simple form submission could be done. 
-                                     Here we will use a simple approach or keep the static JS logic but bounded to backend? 
+                                <!-- Note: For simplicity, update quantity via AJAX or simple form submission could be done.
+                                     Here we will use a simple approach or keep the static JS logic but bounded to backend?
                                      Let's use a form for update if JS is too complex to inject now.
                                      Actually, let's keep JS logic but update backend via fetch.
                                 -->
@@ -412,7 +412,7 @@
             if (data.success) {
                 // Determine price from DOM or data attribute if possible, or reload page.
                 // Simple approach: reload page to update totals correctly
-                location.reload(); 
+                location.reload();
             } else {
                 alert('Gagal mengupdate keranjang');
             }
@@ -431,4 +431,5 @@
     }
 </script>
 </body>
-</html><?php /**PATH D:\COLLEGE LIFE\SEMESTER 3\PEMROGRAMAN WEBSITE\PROJECT\PROJECT NEW NEW\BrownyGift\resources\views/dashboard/customer/keranjang.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH D:\COLLEGE LIFE\SEMESTER 3\PEMROGRAMAN WEBSITE\PROJECT\PROJECT NEW NEW\BrownyGift\resources\views/dashboard/customer/keranjang.blade.php ENDPATH**/ ?>

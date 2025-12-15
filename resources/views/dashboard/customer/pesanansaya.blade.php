@@ -288,7 +288,7 @@
                                         $statusClass = 'status-pending';
                                         $rawStatus = $order->statusPemesanan->status_pemesanan ?? 'unknown';
                                         $status = strtolower($rawStatus);
-                                        
+
                                         if($status == 'diproses') $statusClass = 'status-processing';
                                         elseif($status == 'dikirim') $statusClass = 'status-shipped';
                                         elseif($status == 'selesai') $statusClass = 'status-completed';
@@ -304,7 +304,7 @@
                                         $paymentMethod = strtolower($order->metodePembayaran->metode_pembayaran ?? '');
                                         $isCOD = str_contains($paymentMethod, 'cod') || str_contains($paymentMethod, 'cash') || str_contains($paymentMethod, 'ambil');
                                     @endphp
-                                    
+
                                     @if($status == 'menunggu pembayaran' && !$isCOD)
                                     <button class="btn-action btn-upload" onclick="uploadProof({{ $order->id_pesanan }})">
                                         <i class="fas fa-upload"></i> Upload Bukti
@@ -313,7 +313,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <!-- Empty state rendered via JS or just simple TR here? 
+                            <!-- Empty state rendered via JS or just simple TR here?
                                  The original code had a separate div #emptyOrders.
                                  Let's keep the table empty and show the div if empty.
                             -->
@@ -349,7 +349,7 @@
                     <span class="text-muted" id="modalDate"></span>
                     <span id="modalStatus"></span>
                 </div>
-                
+
                 <h6 class="fw-bold mb-3"><i class="fas fa-box me-2 text-pink"></i> Daftar Produk</h6>
                 <ul class="list-unstyled mb-4" id="modalProducts">
                     <!-- Products injected here -->
@@ -420,10 +420,10 @@
             address: 'Alamat Pengiriman Default', // In a real app we'd fetch this from address relation
             products: [
                 @foreach($order->detailPesanan as $detail)
-                { 
-                    name: '{{ $detail->produk->nama_produk ?? "Produk Dihapus" }}', 
-                    qty: {{ $detail->quantity_per_produk }}, 
-                    price: {{ $detail->harga_produk }} 
+                {
+                    name: '{{ $detail->produk->nama_produk ?? "Produk Dihapus" }}',
+                    qty: {{ $detail->quantity_per_produk }},
+                    price: {{ $detail->harga_produk }}
                 },
                 @endforeach
             ]

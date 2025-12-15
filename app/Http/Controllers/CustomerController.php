@@ -16,6 +16,7 @@ use App\Models\Produk;
 use App\Models\metode_pembayaran;
 use App\Models\kecamatan;
 use App\Models\desa;
+use App\Models\status_pembayaran;;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -216,9 +217,20 @@ class CustomerController extends Controller
         $order = Auth::user()->pesanan()->findOrFail($id);
 
         if ($request->hasFile('bukti_pembayaran')) {
-            $imageName = time() . '.' . $request->bukti_pembayaran->extension();
-            $request->bukti_pembayaran->storeAs('public/payments', $imageName);
-            $order->update(['bukti_pembayaran' => $imageName, 'id_status_pemesanan' => 2]);
+            $folderPath = public_path('/images/bukti');
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath, 0755, true);
+            }
+
+        if ($order->bukti_pembayaran && file_exists(public_path('images/bukti/' . $order->bukti_pembayaran))) {
+            unlink(public_path('images/bukti/' . $order->bukti_pembayaran));
+        }
+
+            $imageName = 'bukti_' . $order->id_pesanan . '_' . time() . '.' . $request->bukti_pembayaran->extension();
+            $request->bukti_pembayaran->move(public_path('images/bukti'), $imageName);
+
+            $order->update(['bukti_pembayaran' => $imageName, 'id_status_pemesanan' => 2, 'id_status_pembayaran' => 2]);
+
             return back()->with('success', 'Bukti berhasil diupload!');
         }
         return back()->with('error', 'Gagal upload.');
