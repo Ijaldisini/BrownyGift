@@ -1,10 +1,8 @@
-@extends('layouts.owner')
-
-@section('title', 'Edit Profil Toko')
+<?php $__env->startSection('title', 'Edit Profil Toko'); ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <h2 class="text-3xl font-bold text-pink-800 mb-8 text-center">
         Edit Profil Toko
@@ -13,14 +11,14 @@
     <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-10">
 
         <form action="/owner/profil_toko_edit" method="POST" class="space-y-5">
-            @csrf
+            <?php echo csrf_field(); ?>
 
             <div>
                 <label class="block font-semibold mb-1">Nama Toko</label>
                 <input type="text" name="nama_toko"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
-                    value={{ $toko->nama_toko }} required>
+                    value=<?php echo e($toko->nama_toko); ?> required>
             </div>
 
             <div>
@@ -28,7 +26,7 @@
                 <textarea name="deskripsi" rows="4"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
-                    required>{{ $toko->deskripsi }}</textarea>
+                    required><?php echo e($toko->deskripsi); ?></textarea>
             </div>
 
             <div>
@@ -36,7 +34,7 @@
                 <textarea name="tentang_kami" rows="5"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
-                    required>{{ $toko->tentang_kami }}</textarea>
+                    required><?php echo e($toko->tentang_kami); ?></textarea>
             </div>
 
             <div class="text-center pt-4">
@@ -49,4 +47,6 @@
 
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.owner', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\COOLYEAHH!!\SMT 3\BrownyGift\resources\views/dashboard/owner/profil_toko_edit.blade.php ENDPATH**/ ?>

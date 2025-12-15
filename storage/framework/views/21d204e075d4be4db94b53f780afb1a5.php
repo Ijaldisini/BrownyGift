@@ -1,10 +1,8 @@
-@extends('layouts.owner')
-
-@section('title', 'Edit Karyawan')
+<?php $__env->startSection('title', 'Edit Karyawan'); ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <h2 class="text-3xl font-bold text-pink-800 mb-8 text-center">
         Edit Akun Karyawan
@@ -12,12 +10,12 @@
 
     <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-8">
 
-        <form action="/owner/karyawan_edit/{{ $karyawan->id_user }}" method="POST" class="space-y-5">
-            @csrf
+        <form action="/owner/karyawan_edit/<?php echo e($karyawan->id_user); ?>" method="POST" class="space-y-5">
+            <?php echo csrf_field(); ?>
 
             <div>
                 <label class="block font-semibold mb-1">Nama Karyawan</label>
-                <input type="text" name="nama" value="{{ $karyawan->nama }}"
+                <input type="text" name="nama" value="<?php echo e($karyawan->nama); ?>"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                    focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     required>
@@ -25,7 +23,7 @@
 
             <div>
                 <label class="block font-semibold mb-1">Email Karyawan</label>
-                <input type="email" name="email" value="{{ $karyawan->email }}"
+                <input type="email" name="email" value="<?php echo e($karyawan->email); ?>"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                    focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     required>
@@ -33,7 +31,7 @@
 
             <div>
                 <label class="block font-semibold mb-1">Nomor HP</label>
-                <input type="text" name="no_hp" value="{{ $karyawan->no_hp }}"
+                <input type="text" name="no_hp" value="<?php echo e($karyawan->no_hp); ?>"
                     class="w-full rounded-xl border border-pink-300 px-4 py-3
                    focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     required>
@@ -59,4 +57,6 @@
 
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.owner', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\COOLYEAHH!!\SMT 3\BrownyGift\resources\views/dashboard/owner/karyawan_edit.blade.php ENDPATH**/ ?>

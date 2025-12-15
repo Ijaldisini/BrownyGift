@@ -1,10 +1,8 @@
-@extends('layouts.owner')
-
-@section('title', 'Dashboard Owner')
+<?php $__env->startSection('title', 'Dashboard Owner'); ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="p-2">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-extrabold text-gray-800 tracking-tight">
@@ -24,22 +22,23 @@
                     </div>
                 </div>
                 <h3 class="text-3xl font-black text-gray-800">
-                    {{ number_format($totalPesanan) }}
+                    <?php echo e(number_format($totalPesanan)); ?>
+
                 </h3>
                 <p
                     class="text-xs mt-2 font-semibold
-    {{ $persentasePerubahan >= 0 ? 'text-green-500' : 'text-red-500' }}">
+    <?php echo e($persentasePerubahan >= 0 ? 'text-green-500' : 'text-red-500'); ?>">
 
-                    @if ($persentasePerubahan > 0)
+                    <?php if($persentasePerubahan > 0): ?>
                         <i class="bi bi-arrow-up"></i>
-                        {{ number_format($persentasePerubahan, 1) }}% dari bulan lalu
-                    @elseif ($persentasePerubahan < 0)
+                        <?php echo e(number_format($persentasePerubahan, 1)); ?>% dari bulan lalu
+                    <?php elseif($persentasePerubahan < 0): ?>
                         <i class="bi bi-arrow-down"></i>
-                        {{ number_format(abs($persentasePerubahan), 1) }}% dari bulan lalu
-                    @else
+                        <?php echo e(number_format(abs($persentasePerubahan), 1)); ?>% dari bulan lalu
+                    <?php else: ?>
                         <i class="bi bi-dash"></i>
                         0% dari bulan lalu
-                    @endif
+                    <?php endif; ?>
                 </p>
             </div>
 
@@ -51,7 +50,8 @@
                     </div>
                 </div>
                 <h3 class="text-3xl font-black text-gray-800">
-                    Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                    Rp <?php echo e(number_format($totalPendapatan, 0, ',', '.')); ?>
+
                 </h3>
                 <p class="text-xs text-gray-500 mt-2 italic">Bulan Ini</p>
             </div>
@@ -64,7 +64,8 @@
                     </div>
                 </div>
                 <h3 class="text-3xl font-black text-gray-800">
-                    {{ $produkAktif }}
+                    <?php echo e($produkAktif); ?>
+
                 </h3>
                 <p class="text-xs text-gray-500 mt-2">Katalog Aktif</p>
             </div>
@@ -77,7 +78,8 @@
                     </div>
                 </div>
                 <h3 class="text-3xl font-black text-gray-800">
-                    {{ $karyawan }}
+                    <?php echo e($karyawan); ?>
+
                 </h3>
                 <p class="text-xs text-gray-500 mt-2 font-medium">Staf Aktif</p>
             </div>
@@ -121,31 +123,34 @@
                     <i class="bi bi-clock-history mr-3 text-pink-600"></i>
                     Aktivitas Terbaru
                 </h5>
+                <button class="text-sm font-semibold text-pink-600 hover:text-pink-800">Lihat Semua</button>
             </div>
 
             <div class="space-y-4">
-                @forelse($activities ?? [] as $activity)
+                <?php $__empty_1 = true; $__currentLoopData = $activities ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div
                         class="flex items-start p-4 rounded-xl hover:bg-pink-50 transition-colors border border-transparent hover:border-pink-100">
                         <div
                             class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0
-                    @if ($activity->icon_color == 'success') bg-green-100 text-green-600
-                    @elseif($activity->icon_color == 'info') bg-blue-100 text-blue-600
-                    @else bg-pink-100 text-pink-600 @endif">
-                            <i class="{{ $activity->icon }} text-lg"></i>
+                    <?php if($activity->icon_color == 'success'): ?> bg-green-100 text-green-600
+                    <?php elseif($activity->icon_color == 'info'): ?> bg-blue-100 text-blue-600
+                    <?php else: ?> bg-pink-100 text-pink-600 <?php endif; ?>">
+                            <i class="<?php echo e($activity->icon); ?> text-lg"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="text-gray-900 font-bold text-sm">{{ $activity->description }}</p>
-                            <small class="text-gray-500 text-xs">{{ $activity->time_ago }}</small>
+                            <p class="text-gray-900 font-bold text-sm"><?php echo e($activity->description); ?></p>
+                            <small class="text-gray-500 text-xs"><?php echo e($activity->time_ago); ?></small>
                         </div>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="text-center py-12 text-gray-400">
                         <i class="bi bi-inbox text-5xl mb-4 block opacity-20"></i>
                         <p>Belum ada aktivitas terbaru</p>
                     </div>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.owner', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\COOLYEAHH!!\SMT 3\BrownyGift\resources\views/dashboard/owner/index.blade.php ENDPATH**/ ?>
