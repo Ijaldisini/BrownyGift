@@ -99,8 +99,8 @@
                                     {{ $product->deskripsi_produk ?? '-' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="font-bold text-lg bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="font-bold text-base bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">
                                     Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
                                 </span>
                             </td>

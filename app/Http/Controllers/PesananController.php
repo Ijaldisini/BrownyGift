@@ -18,7 +18,21 @@ class PesananController extends Controller
         $statusPembayaran = status_pembayaran::all();
         $statusPemesanan = status_pemesanan::all();
 
-        return view('dashboard.admin.pesanan.index', compact('orders', 'statusPembayaran', 'statusPemesanan'));
+        // Hitung jumlah pesanan berdasarkan status
+        $totalPesanan = $orders->count();
+        $belumDibayar = $orders->where('statusPembayaran.status_pembayaran', 'Belum Lunas')->count();
+        $diproses = $orders->where('statusPemesanan.status_pemesanan', 'Diproses')->count();
+        $selesai = $orders->where('statusPemesanan.status_pemesanan', 'Selesai')->count();
+
+        return view('dashboard.admin.pesanan.index', compact(
+            'orders',
+            'statusPembayaran',
+            'statusPemesanan',
+            'totalPesanan',
+            'belumDibayar',
+            'diproses',
+            'selesai'
+        ));
     }
 
     public function show($id)

@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Belum Dibayar -->
+           <!-- Belum Dibayar -->
             <div class="group bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-amber-200 hover:-translate-y-1">
                 <div class="p-6 relative">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-100 to-orange-100 rounded-bl-full opacity-50"></div>
@@ -67,7 +67,9 @@
                         </div>
                         <p class="text-sm font-medium text-gray-600 mb-1">Belum Dibayar</p>
                         <h3 class="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-                            {{ $orders->where('statusPembayaran.status_pembayaran', '!=', 'Lunas')->count() }}
+                            {{ $orders->filter(function($order) {
+                                return $order->statusPembayaran && strtolower($order->statusPembayaran->status_pembayaran) == 'belum lunas';
+                            })->count() }}
                         </h3>
                     </div>
                 </div>
@@ -85,7 +87,9 @@
                         </div>
                         <p class="text-sm font-medium text-gray-600 mb-1">Diproses</p>
                         <h3 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                            {{ $orders->where('statusPemesanan.status_pemesanan', 'Diproses')->count() }}
+                            {{ $orders->filter(function($order) {
+                                return $order->statusPemesanan && $order->statusPemesanan->status_pemesanan == 'diproses';
+                            })->count() }}
                         </h3>
                     </div>
                 </div>
@@ -103,7 +107,9 @@
                         </div>
                         <p class="text-sm font-medium text-gray-600 mb-1">Selesai</p>
                         <h3 class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                            {{ $orders->where('statusPemesanan.status_pemesanan', 'Selesai')->count() }}
+                            {{ $orders->filter(function($order) {
+                                return $order->statusPemesanan && $order->statusPemesanan->status_pemesanan == 'selesai';
+                            })->count() }}
                         </h3>
                     </div>
                 </div>
